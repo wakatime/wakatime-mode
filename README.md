@@ -4,7 +4,7 @@
 
 ## Usage
 
-Toggle WakaTime for the current buffer by invoking `M-x wakatime-mode`.
+Enable WakaTime for the current buffer by invoking `M-x wakatime-mode`.  If you wish to activate it globally, run `M-x global-wakatime-mode`.
 
 
 ## Configuration
