@@ -31,23 +31,23 @@ Set SAVEP to non-nil for write action."
           wakatime-user-agent
           wakatime-api-key))
 
-(defun wakatime-call (savep)
-  "Call WakaTime service.  Set SAVEP to non-nil for write action."
+(defun wakatime-call (command)
+  "Call WakaTime COMMAND."
   (if (or (not wakatime-api-key) (string= "" wakatime-api-key))
       (let ((api-key (read-string "API key: ")))
         (setq wakatime-api-key api-key)))
   (if (or (not wakatime-cli-path)
           (not (file-exists-p wakatime-cli-path)))
       (error "CLI script is not found!"))
-  (start-process-shell-command "wakatime" "*WakaTime messages*" (wakatime-client-command savep)))
+  (start-process-shell-command "wakatime" "*WakaTime messages*" command))
 
 (defun wakatime-ping ()
   "Send ping notice to WakaTime."
-  (wakatime-call nil))
+  (wakatime-call (wakatime-client-command nil)))
 
 (defun wakatime-save ()
   "Send save notice to WakaTime."
-  (wakatime-call t))
+  (wakatime-call (wakatime-client-command t)))
 
 (defun wakatime-turn-on ()
   "Turn on WakaTime."
