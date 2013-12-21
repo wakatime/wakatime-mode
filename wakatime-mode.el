@@ -35,7 +35,7 @@ Set SAVEP to non-nil for write action."
   (let* ((command (wakatime-client-command savep))
          (executable (car command))
          (args (cdr command)))
-    (start-process "wakatime" "*WakaTime messages*" executable args)))
+    (start-process-shell-command "wakatime" "*WakaTime messages*" (concat executable " " args))))
 
 (defun wakatime-ping ()
   "Send ping notice to WakaTime."
