@@ -52,7 +52,10 @@
 
 ;;;###autoload
 (define-minor-mode wakatime-mode
-  "Toggle WakaTime"
+  "Toggle WakaTime (WakaTime mode).
+With a prefix argument ARG, enable Whitespace mode if ARG is
+positive, and disable it otherwise.  If called from Lisp, enable
+the mode if ARG is omitted or nil."
   :lighter    " waka"
   :init-value nil
   :global     nil
