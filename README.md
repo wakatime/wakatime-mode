@@ -16,11 +16,11 @@ Point `wakatime-cli-path` to the absolute path of the CLI script (`wakatime-cli.
 
 Heads Up! WakaTime depends on [Python](http://www.python.org/getit/) being installed to work correctly.
 
-1. Get an api key from: http://wakatime.com
+1. Get an API key from: http://wakatime.com
 
 2. Install wakatime-mode for Emacs.
 
-3. You will see a prompt asking for your [api key](https://www.wakati.me/#apikey). Enter your api key, then press `enter`.
+3. You will see a prompt asking for your [API key](https://www.wakati.me/#apikey). Enter your API key, then press `enter`.
 
 4. Use Emacs with wakatime-mode turned on and your time will automatically be tracked for you.
 
