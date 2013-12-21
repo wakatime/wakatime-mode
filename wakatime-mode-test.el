@@ -2,7 +2,7 @@
 (require 'wakatime-mode)
 
 (ert-deftest wakatime-client-command ()
-    ""
+  "Test cases for function `wakatime-client-command'."
   (let ((wakatime-api-key "secret")
         (wakatime-cli-path "client")
         (wakatime-user-agent "wakatime-mode"))
