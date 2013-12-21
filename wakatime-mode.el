@@ -22,6 +22,11 @@
 (defun wakatime-client-command (savep)
   "Return client command executable and arguments.
 Set SAVEP to non-nil for write action."
+  (if (not wakatime-api-key)
+      (error "API key is not found!"))
+  (if (or (not wakatime-cli-path)
+          (not (file-exists-p wakatime-cli-path)))
+      (error "CLI script is not found!"))
   (format "/usr/bin/python %s --file %s %s --plugin %s --key %s"
           wakatime-cli-path
           (buffer-file-name (current-buffer))
