@@ -1,4 +1,4 @@
-;;; package --- Minor mode for WakaTime
+;;; package --- Automatic time tracking extension for Emacs based on WakaTime
 ;; Version: 0.1
 ;; Author: Gabor Torok <gabor@20y.hu>
 ;;; Commentary:
