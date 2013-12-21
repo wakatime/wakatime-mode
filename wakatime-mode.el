@@ -24,12 +24,6 @@
 (defun wakatime-client-command (savep)
   "Return client command executable and arguments.
 Set SAVEP to non-nil for write action."
-  (if (or (not wakatime-api-key) (string= "" wakatime-api-key))
-      (let ((api-key (read-string "API key: ")))
-        (setq wakatime-api-key api-key)))
-  (if (or (not wakatime-cli-path)
-          (not (file-exists-p wakatime-cli-path)))
-      (error "CLI script is not found!"))
   (format "/usr/bin/python %s --file %s %s --plugin %s --key %s"
           wakatime-cli-path
           (buffer-file-name (current-buffer))
@@ -39,6 +33,12 @@ Set SAVEP to non-nil for write action."
 
 (defun wakatime-call (savep)
   "Call WakaTime service.  Set SAVEP to non-nil for write action."
+  (if (or (not wakatime-api-key) (string= "" wakatime-api-key))
+      (let ((api-key (read-string "API key: ")))
+        (setq wakatime-api-key api-key)))
+  (if (or (not wakatime-cli-path)
+          (not (file-exists-p wakatime-cli-path)))
+      (error "CLI script is not found!"))
   (start-process-shell-command "wakatime" "*WakaTime messages*" (wakatime-client-command savep)))
 
 (defun wakatime-ping ()
