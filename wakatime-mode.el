@@ -14,7 +14,7 @@
   :type 'string
   :group 'wakatime)
 
-(defcustom wakatime-client-path nil
+(defcustom wakatime-cli-path nil
   "Path of CLI client for WakaTime."
   :type 'string
   :group 'wakatime)
@@ -23,7 +23,7 @@
   "Return cons of client command executable and arguments.
 Set SAVEP to non-nil for write action."
   (cons
-   (format "/usr/bin/python %s" wakatime-client-path)
+   (format "/usr/bin/python %s" wakatime-cli-path)
    (format "--file %s %s --plugin %s --key %s"
            (buffer-file-name (current-buffer))
            (if savep "--write" "")
