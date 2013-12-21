@@ -71,5 +71,11 @@ the mode if ARG is omitted or nil."
    (t
     (wakatime-turn-off))))
 
+;;;###autoload
+(define-globalized-minor-mode global-wakatime-mode wakatime-mode wakatime-on)
+
+(defun wakatime-on ()
+  (wakatime-mode 1))
+
 (provide 'wakatime-mode)
 ;;; wakatime-mode.el ends here
