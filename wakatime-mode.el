@@ -24,8 +24,9 @@
 (defun wakatime-client-command (savep)
   "Return client command executable and arguments.
 Set SAVEP to non-nil for write action."
-  (if (not wakatime-api-key)
-      (error "API key is not found!"))
+  (if (or (not wakatime-api-key) (string= "" wakatime-api-key))
+      (let ((api-key (read-string "API key: ")))
+        (setq wakatime-api-key api-key)))
   (if (or (not wakatime-cli-path)
           (not (file-exists-p wakatime-cli-path)))
       (error "CLI script is not found!"))
