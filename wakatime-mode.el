@@ -21,10 +21,16 @@
   :type 'string
   :group 'wakatime)
 
+(defcustom wakatime-python-bin "/usr/bin/python"
+  "Path of Python binary."
+  :type 'string
+  :group 'wakatime)
+
 (defun wakatime-client-command (savep)
   "Return client command executable and arguments.
 Set SAVEP to non-nil for write action."
-  (format "/usr/bin/python %s --file %s %s --plugin %s --key %s --time %.2f"
+  (format "%s %s --file %s %s --plugin %s --key %s --time %.2f"
+          wakatime-python-bin
           wakatime-cli-path
           (buffer-file-name (current-buffer))
           (if savep "--write" "")
