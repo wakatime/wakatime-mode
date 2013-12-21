@@ -1,5 +1,6 @@
 # Emacs Minor Mode for WakaTime
 
+`wakatime-mode` is an automatic time tracking extension for Emacs using [WakaTime](https://www.wakati.me/).
 
 ## Usage
 
