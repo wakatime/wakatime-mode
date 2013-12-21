@@ -24,12 +24,13 @@
 (defun wakatime-client-command (savep)
   "Return client command executable and arguments.
 Set SAVEP to non-nil for write action."
-  (format "/usr/bin/python %s --file %s %s --plugin %s --key %s"
+  (format "/usr/bin/python %s --file %s %s --plugin %s --key %s --time %.2f"
           wakatime-cli-path
           (buffer-file-name (current-buffer))
           (if savep "--write" "")
           wakatime-user-agent
-          wakatime-api-key))
+          wakatime-api-key
+          (float-time)))
 
 (defun wakatime-call (command)
   "Call WakaTime COMMAND."
