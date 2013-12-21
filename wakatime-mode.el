@@ -20,23 +20,30 @@
   :group 'wakatime)
 
 (defun wakatime-client-command (savep)
-  "Return client command.  Set SAVEP to non-nil for write action."
-  (format "python %s --file %s %s --plugin %s --key %s"
-          wakatime-client-path
-          (buffer-file-name (current-buffer))
-          (if savep "--write" "")
-          wakatime-user-agent
-          wakatime-api-key))
+  "Return cons of client command executable and arguments.
+Set SAVEP to non-nil for write action."
+  (cons
+   (format "/usr/bin/python %s" wakatime-client-path)
+   (format "--file %s %s --plugin %s --key %s"
+           (buffer-file-name (current-buffer))
+           (if savep "--write" "")
+           wakatime-user-agent
+           wakatime-api-key)))
+
+(defun wakatime-call (savep)
+  "Call WakaTime service.  Set SAVEP to non-nil for write action."
+  (let* ((command (wakatime-client-command savep))
+         (executable (car command))
+         (args (cdr command)))
+    (start-process "wakatime" "*WakaTime messages*" executable args)))
 
 (defun wakatime-ping ()
   "Send ping notice to WakaTime."
-  (shell-command
-   (wakatime-client-command nil)))
+  (wakatime-call nil))
 
 (defun wakatime-save ()
   "Send save notice to WakaTime."
-  (shell-command
-   (wakatime-client-command t)))
+  (wakatime-call t))
 
 (defun wakatime-turn-on ()
   "Turn on WakaTime."
