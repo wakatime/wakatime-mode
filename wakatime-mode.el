@@ -31,4 +31,29 @@
   (shell-command
    (wakatime-client-command t)))
 
+(defun wakatime-turn-on ()
+  (add-hook 'after-save-hook 'wakatime-save nil t)
+  (add-hook 'auto-save-hook 'wakatime-save nil t)
+  (add-hook 'first-change-hook 'wakatime-ping nil t))
+
+(defun wakatime-turn-off ()
+  (remove-hook 'after-save-hook 'wakatime-save t)
+  (remove-hook 'auto-save-hook 'wakatime-save t)
+  (remove-hook 'first-change-hook 'wakatime-ping t))
+
+;;;###autoload
+(define-minor-mode wakatime-mode
+  "Toggle WakaTime"
+  :lighter    " waka"
+  :init-value nil
+  :global     nil
+  :group      'wakatime
+  (cond
+   (noninteractive
+    (setq wakatime-mode nil))
+   (wakatime-mode
+    (wakatime-turn-on))
+   (t
+    (wakatime-turn-off))))
+
 (provide 'wakatime-mode)
