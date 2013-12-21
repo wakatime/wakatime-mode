@@ -1,4 +1,6 @@
 ;;; package --- Minor mode for WakaTime
+;; Version: 0.1
+;; Author: Gabor Torok <gabor@20y.hu>
 ;;; Commentary:
 ;;; Code:
 
