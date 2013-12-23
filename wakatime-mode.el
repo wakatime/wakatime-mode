@@ -65,14 +65,16 @@ Set SAVEP to non-nil for write action."
           wakatime-api-key
           (float-time)))
 
-(defun wakatime-call (command)
-  "Call WakaTime COMMAND."
+(defun wakatime-init ()
   (if (or (not wakatime-api-key) (string= "" wakatime-api-key))
       (let ((api-key (read-string "API key: ")))
         (customize-save-variable 'wakatime-api-key api-key)))
   (if (or (not wakatime-cli-path)
           (not (file-exists-p wakatime-cli-path)))
-      (error "CLI script is not found!"))
+      (error "CLI script is not found!")))
+
+(defun wakatime-call (command)
+  "Call WakaTime COMMAND."
   (start-process-shell-command "wakatime" "*WakaTime messages*" command))
 
 (defun wakatime-ping ()
@@ -85,6 +87,7 @@ Set SAVEP to non-nil for write action."
 
 (defun wakatime-turn-on ()
   "Turn on WakaTime."
+  (wakatime-init)
   (add-hook 'after-save-hook 'wakatime-save nil t)
   (add-hook 'auto-save-hook 'wakatime-save nil t)
   (add-hook 'first-change-hook 'wakatime-ping nil t))
