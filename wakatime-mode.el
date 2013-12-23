@@ -69,7 +69,7 @@ Set SAVEP to non-nil for write action."
   "Call WakaTime COMMAND."
   (if (or (not wakatime-api-key) (string= "" wakatime-api-key))
       (let ((api-key (read-string "API key: ")))
-        (setq wakatime-api-key api-key)))
+        (customize-save-variable 'wakatime-api-key api-key)))
   (if (or (not wakatime-cli-path)
           (not (file-exists-p wakatime-cli-path)))
       (error "CLI script is not found!"))
