@@ -33,6 +33,8 @@
 
 (defconst wakatime-user-agent "wakatime-mode")
 
+(defconst wakatime-error-codes '((api . 102)))
+
 (defgroup wakatime nil
   "Customizations for WakaTime"
   :group 'convenience
@@ -77,7 +79,18 @@ Set SAVEP to non-nil for write action."
 
 (defun wakatime-call (command)
   "Call WakaTime COMMAND."
-  (start-process-shell-command "wakatime" "*WakaTime messages*" command))
+  (let ((p (start-process-shell-command "wakatime" "*WakaTime messages*" command)))
+    (while (process-live-p p))
+    (let ((exit-status (process-exit-status p)))
+      (cond
+       ((= (cdr (assoc 'api wakatime-error-codes)) exit-status)
+        (progn
+          (global-wakatime-mode -1)
+          (error "An error occured while connecting to WakaTime, check your API key! WakaTime mode has been disabled.")))
+       ((< 0 exit-status)
+        (progn
+          (global-wakatime-mode -1)
+          (error "Unexpected WakaTime error occured (code %s)! WakaTime mode has been disabled." exit-status)))))))
 
 (defun wakatime-ping ()
   "Send ping notice to WakaTime."
