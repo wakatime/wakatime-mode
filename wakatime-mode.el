@@ -1,7 +1,34 @@
-;;; package --- Automatic time tracking extension for Emacs based on WakaTime
-;; Version: 0.1
+;;; wakatime-mode.el --- Automatic time tracking extension based on WakaTime
+
+;; Copyright (C) 2013  Gabor Torok <gabor@20y.hu>
+
 ;; Author: Gabor Torok <gabor@20y.hu>
+;; Keywords: calendar, comm
+;; Version: 0.1
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 ;;; Commentary:
+
+;; Enable WakaTime for the current buffer by invoking
+;; `wakatime-mode'. If you wish to activate it globally, use
+;; `global-wakatime-mode'.
+
+;; Set variable `wakatime-api-key' to your API key. Point
+;; `wakatime-cli-path' to the absolute path of the CLI script
+;; (wakatime-cli.py).
+
 ;;; Code:
 
 (defconst wakatime-user-agent "wakatime-mode")
@@ -88,6 +115,7 @@ the mode if ARG is omitted or nil."
 
 ;;;###autoload
 (define-globalized-minor-mode global-wakatime-mode wakatime-mode (lambda () (wakatime-mode 1)))
+
 
 (provide 'wakatime-mode)
 ;;; wakatime-mode.el ends here
