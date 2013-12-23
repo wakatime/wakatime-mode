@@ -66,12 +66,13 @@ Set SAVEP to non-nil for write action."
           (float-time)))
 
 (defun wakatime-init ()
-  (if (or (not wakatime-api-key) (string= "" wakatime-api-key))
-      (let ((api-key (read-string "API key: ")))
+  (if (or (not wakatime-api-key)
+          (string= "" wakatime-api-key))
+      (let ((api-key (read-string "WakaTime API key: ")))
         (customize-save-variable 'wakatime-api-key api-key)))
   (if (or (not wakatime-cli-path)
           (not (file-exists-p wakatime-cli-path)))
-      (let ((cli-path (read-string "CLI script path: ")))
+      (let ((cli-path (read-string "WakaTime CLI script path: ")))
         (customize-save-variable 'wakatime-cli-path cli-path))))
 
 (defun wakatime-call (command)
