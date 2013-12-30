@@ -23,11 +23,15 @@ Heads Up! WakaTime depends on [Python](http://www.python.org/getit/) being insta
 
 3. You will see a prompt asking for your [API key](https://www.wakati.me/#apikey). Enter your API key, then press `enter`.
 
-4. Use Emacs with wakatime-mode turned on and your time will automatically be tracked for you.
+4. Download or clone the [wakatime-cli repository](https://github.com/wakatime/wakatime).
 
-5. Visit http://wakatime.com to see your logged time.
+5. You will see a prompt asking for the path to wakatime-cli.py. Enter the path to the [wakatime-cli.py](https://github.com/wakatime/wakatime/blob/256aaf5dc3ffba35ea0b899b248328cccd76de6b/wakatime-cli.py) file, then press `enter`.
 
-6. Consider installing [BIND9](https://help.ubuntu.com/community/BIND9ServerHowto#Caching_Server_configuration) to cache your repeated DNS requests: `sudo apt-get install bind9`
+6. Use Emacs with wakatime-mode turned on and your time will automatically be tracked for you.
+
+7. Visit http://wakatime.com to see your logged time.
+
+8. Consider installing [BIND9](https://help.ubuntu.com/community/BIND9ServerHowto#Caching_Server_configuration) to cache your repeated DNS requests: `sudo apt-get install bind9`
 
 
 ## Screen Shots
