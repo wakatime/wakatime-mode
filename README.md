@@ -1,6 +1,6 @@
 # Emacs Minor Mode for WakaTime
 
-`wakatime-mode` is an automatic time tracking extension for Emacs using [WakaTime](https://www.wakatime.com/).
+`wakatime-mode` is an automatic time tracking extension for Emacs using [WakaTime](https://wakatime.com/).
 
 ## Usage
 
@@ -9,7 +9,7 @@ Enable WakaTime for the current buffer by invoking `M-x wakatime-mode`.  If you 
 
 ## Configuration
 
-Set variable `wakatime-api-key` to your [API key](https://www.wakatime.com/#apikey).
+Set variable `wakatime-api-key` to your [API key](https://wakatime.com/#apikey).
 Point `wakatime-cli-path` to the absolute path of the CLI script (`wakatime-cli.py`).
 
 
@@ -21,7 +21,7 @@ Heads Up! WakaTime depends on [Python](http://www.python.org/getit/) being insta
 
 2. Install wakatime-mode for Emacs using [MELPA](http://melpa.milkbox.net/#/wakatime-mode).
 
-3. You will see a prompt asking for your [API key](https://www.wakatime.com/#apikey). Enter your API key, then press `enter`.
+3. You will see a prompt asking for your [API key](https://wakatime.com/#apikey). Enter your API key, then press `enter`.
 
 4. Download or clone the [wakatime-cli repository](https://github.com/wakatime/wakatime).
 
@@ -36,4 +36,4 @@ Heads Up! WakaTime depends on [Python](http://www.python.org/getit/) being insta
 
 ## Screen Shots
 
-![Project Overview](https://www.wakatime.com/static/img/ScreenShots/Screen Shot 2013-10-26 at 5.04.01 PM.png)
+![Project Overview](https://wakatime.com/static/img/ScreenShots/Screen Shot 2013-10-26 at 5.04.01 PM.png)
