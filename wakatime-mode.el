@@ -101,11 +101,13 @@ Set SAVEP to non-nil for write action."
 
 (defun wakatime-ping ()
   "Send ping notice to WakaTime."
-  (wakatime-call (wakatime-client-command nil)))
+  (when (buffer-file-name (current-buffer))
+    (wakatime-call (wakatime-client-command nil))))
 
 (defun wakatime-save ()
   "Send save notice to WakaTime."
-  (wakatime-call (wakatime-client-command t)))
+  (when (buffer-file-name (current-buffer))
+    (wakatime-call (wakatime-client-command t))))
 
 (defun wakatime-turn-on ()
   "Turn on WakaTime."
