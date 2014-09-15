@@ -79,31 +79,35 @@ Set SAVEP to non-nil for write action."
 
 (defun wakatime-call (command)
   "Call WakaTime COMMAND."
-  (set-process-sentinel
-   (start-process "Shell" (generate-new-buffer " *WakaTime messages*")
-                  shell-file-name shell-command-switch command)
-   (lambda (process signal)
-     (when (memq (process-status process) '(exit signal))
-       (let ((exit-status (process-exit-status process)))
-         (cond
-          ((= (cdr (assoc 'api wakatime-error-codes)) exit-status)
-           (progn
-             (global-wakatime-mode -1)
-             (error "An error occured while connecting to WakaTime, check your API key! WakaTime mode has been disabled.")))
-          ((< 0 exit-status)
-           (progn
-             (global-wakatime-mode -1)
-             (error "Unexpected WakaTime error occured (code %s)! WakaTime mode has been disabled."
-                    exit-status)))) 
-         (kill-buffer (process-buffer process)))))))
+  (let ((process (start-process "Shell" (generate-new-buffer " *WakaTime messages*")
+                                shell-file-name shell-command-switch command)) )
+    (set-process-sentinel
+     process
+     (lambda (process signal)
+       (when (memq (process-status process) '(exit signal))
+         (let ((exit-status (process-exit-status process)))
+           (cond
+            ((= (cdr (assoc 'api wakatime-error-codes)) exit-status)
+             (progn
+               (global-wakatime-mode -1)
+               (error "An error occured while connecting to WakaTime, check your API key! WakaTime mode has been disabled.")))
+            ((< 0 exit-status)
+             (progn
+               (global-wakatime-mode -1)
+               (error "Unexpected WakaTime error occured (code %s)! WakaTime mode has been disabled."
+                      exit-status))))
+           (kill-buffer (process-buffer process))))))
+    (set-process-query-on-exit-flag process nil)))
 
 (defun wakatime-ping ()
   "Send ping notice to WakaTime."
-  (wakatime-call (wakatime-client-command nil)))
+  (when (buffer-file-name (current-buffer))
+    (wakatime-call (wakatime-client-command nil))))
 
 (defun wakatime-save ()
   "Send save notice to WakaTime."
-  (wakatime-call (wakatime-client-command t)))
+  (when (buffer-file-name (current-buffer))
+    (wakatime-call (wakatime-client-command t))))
 
 (defun wakatime-turn-on ()
   "Turn on WakaTime."
