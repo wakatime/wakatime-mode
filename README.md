@@ -17,23 +17,19 @@ Point `wakatime-cli-path` to the absolute path of the CLI script (`wakatime-cli.
 
 Heads Up! WakaTime depends on [Python](http://www.python.org/getit/) being installed to work correctly.
 
-1. Get an API key from: http://wakatime.com.
+1. Install wakatime-mode for Emacs using [MELPA](http://melpa.milkbox.net/#/wakatime-mode).
 
-2. Install wakatime-mode for Emacs using [MELPA](http://melpa.milkbox.net/#/wakatime-mode).
+2. Enter your [api key](https://wakatime.com/settings#apikey) from https://wakatime.com/settings#apikey, then press `enter`.
 
-3. You will see a prompt asking for your [API key](https://wakatime.com/#apikey). Enter your API key, then press `enter`.
+3. Download or clone the [wakatime-cli repository](https://github.com/wakatime/wakatime).
 
-4. Download or clone the [wakatime-cli repository](https://github.com/wakatime/wakatime).
+4. You will see a prompt asking for the path to wakatime-cli.py. Enter the path to the [wakatime-cli.py](https://github.com/wakatime/wakatime/blob/256aaf5dc3ffba35ea0b899b248328cccd76de6b/wakatime-cli.py) file, then press `enter`.
 
-5. You will see a prompt asking for the path to wakatime-cli.py. Enter the path to the [wakatime-cli.py](https://github.com/wakatime/wakatime/blob/256aaf5dc3ffba35ea0b899b248328cccd76de6b/wakatime-cli.py) file, then press `enter`.
+5. Use Emacs with wakatime-mode turned on and your time will be tracked for you automatically.
 
-6. Use Emacs with wakatime-mode turned on and your time will automatically be tracked for you.
-
-7. Visit http://wakatime.com to see your logged time.
-
-8. Consider installing [BIND9](https://help.ubuntu.com/community/BIND9ServerHowto#Caching_Server_configuration) to cache your repeated DNS requests: `sudo apt-get install bind9`
+6. Visit http://wakatime.com to see your logged time.
 
 
 ## Screen Shots
 
-![Project Overview](https://wakatime.com/static/img/ScreenShots/ScreenShot_2014-09-15.png)
+![Project Overview](https://wakatime.com/static/img/ScreenShots/ScreenShot-2014-10-29.png)
