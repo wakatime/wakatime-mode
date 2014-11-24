@@ -19,13 +19,13 @@ Heads Up! WakaTime depends on [Python](http://www.python.org/getit/) being insta
 
 1. Install wakatime-mode for Emacs using [MELPA](http://melpa.milkbox.net/#/wakatime-mode).
 
-2. Add `(global-wakatime-mode)` to your `init.el` file, then restart Emacs.
+2. Enter your [api key](https://wakatime.com/settings#apikey) from https://wakatime.com/settings#apikey, then press `enter`.
 
-3. Enter your [api key](https://wakatime.com/settings#apikey) from https://wakatime.com/settings#apikey, then press `enter`.
+3. Download or clone the [wakatime-cli repository](https://github.com/wakatime/wakatime).
 
-4. Download or clone the [wakatime-cli repository](https://github.com/wakatime/wakatime).
+4. You will see a prompt asking for the path to wakatime-cli.py. Enter the path to the [wakatime-cli.py](https://github.com/wakatime/wakatime/blob/256aaf5dc3ffba35ea0b899b248328cccd76de6b/wakatime-cli.py) file, then press `enter`.
 
-5. You will see a prompt asking for the path to wakatime-cli.py. Enter the path to the [wakatime-cli.py](https://github.com/wakatime/wakatime/blob/256aaf5dc3ffba35ea0b899b248328cccd76de6b/wakatime-cli.py) file, then press `enter`.
+5. Add `(global-wakatime-mode)` to your `init.el` file, then restart Emacs.
 
 6. Use Emacs with wakatime-mode turned on and your time will be tracked for you automatically.
 
