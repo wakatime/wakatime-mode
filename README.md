@@ -2,16 +2,6 @@
 
 `wakatime-mode` is an automatic time tracking extension for Emacs using [WakaTime](https://wakatime.com/).
 
-## Usage
-
-Enable WakaTime for the current buffer by invoking `M-x wakatime-mode`.  If you wish to activate it globally, run `M-x global-wakatime-mode`.
-
-
-## Configuration
-
-Set variable `wakatime-api-key` to your [API key](https://wakatime.com/#apikey).
-Point `wakatime-cli-path` to the absolute path of the CLI script (`wakatime-cli.py`).
-
 
 ## Installation
 
@@ -35,3 +25,14 @@ Heads Up! WakaTime depends on [Python](http://www.python.org/getit/) being insta
 ## Screen Shots
 
 ![Project Overview](https://wakatime.com/static/img/ScreenShots/ScreenShot-2014-10-29.png)
+
+
+## Usage
+
+Enable WakaTime for the current buffer by invoking `M-x wakatime-mode`.  If you wish to activate it globally, run `M-x global-wakatime-mode`.
+
+
+## Configuration
+
+Set variable `wakatime-api-key` to your [API key](https://wakatime.com/#apikey).
+Point `wakatime-cli-path` to the absolute path of the CLI script (`wakatime-cli.py`).
