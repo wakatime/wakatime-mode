@@ -89,12 +89,10 @@ Set SAVEP to non-nil for write action."
            (cond
             ((= (cdr (assoc 'api wakatime-error-codes)) exit-status)
              (progn
-               (global-wakatime-mode -1)
-               (error "An error occured while connecting to WakaTime, check your API key! WakaTime mode has been disabled.")))
+               (error "An error occured while connecting to WakaTime.")))
             ((< 0 exit-status)
              (progn
-               (global-wakatime-mode -1)
-               (error "Unexpected WakaTime error occured (code %s)! WakaTime mode has been disabled."
+               (error "Unexpected WakaTime error occured (code %s)!"
                       exit-status))))
            (kill-buffer (process-buffer process))))))
     (set-process-query-on-exit-flag process nil)))
