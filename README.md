@@ -35,4 +35,7 @@ Enable WakaTime for the current buffer by invoking `M-x wakatime-mode`.  If you 
 ## Configuration
 
 Set variable `wakatime-api-key` to your [API key](https://wakatime.com/#apikey).
+
 Point `wakatime-cli-path` to the absolute path of [wakatime-cli](https://pypi.python.org/pypi/wakatime).
+
+Optionally, point `wakatime-python-bin` to the absolute path of python on your system. Defaults to `/usr/bin/python`.
