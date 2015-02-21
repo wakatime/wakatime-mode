@@ -50,7 +50,7 @@
   :type 'string
   :group 'wakatime)
 
-(defcustom wakatime-python-bin "/usr/bin/python"
+(defcustom wakatime-python-bin "python"
   "Path of Python binary."
   :type 'string
   :group 'wakatime)

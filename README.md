@@ -38,4 +38,17 @@ Set variable `wakatime-api-key` to your [API key](https://wakatime.com/#apikey).
 
 Point `wakatime-cli-path` to the absolute path of [wakatime-cli](https://pypi.python.org/pypi/wakatime).
 
-Optionally, point `wakatime-python-bin` to the absolute path of python on your system. Defaults to `/usr/bin/python`.
+Optionally, point `wakatime-python-bin` to the absolute path of python on your system. Defaults to `python` which only works if python is in your PATH.
+
+
+## Troubleshooting Common Problems
+
+`error in process sentinel: Unexpected WakaTime error occured (code 1)!`
+
+Exit code 1 usually means python wasn't found. Find python by running `which python`, then add that path to your `init.el` file with `(setq wakatime-python-bin "/path/to/python")`.
+
+To be sure heartbeats are getting sent, turn on debug mode by adding this line to your `~/.wakatime.cfg` file:
+
+    debug = true
+
+Then run `tail -f ~/.wakatime.log` and make sure you see a 201 response code from the [WakaTime API](https://wakatime.com/api).
