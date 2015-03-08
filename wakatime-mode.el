@@ -89,7 +89,7 @@ Set SAVEP to non-nil for write action."
            (cond
             ((= (cdr (assoc 'api wakatime-error-codes)) exit-status)
              (progn
-               (error "An error occured while connecting to WakaTime.")))
+               (error "An error occured while connecting to WakaTime (code %s)." exit-status)))
             ((< 0 exit-status)
              (progn
                (error "Unexpected WakaTime error occured (code %s)!"
