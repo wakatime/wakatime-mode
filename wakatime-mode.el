@@ -31,7 +31,7 @@
 
 ;;; Code:
 
-(defconst wakatime-user-agent "wakatime-mode")
+(defconst wakatime-user-agent "emacs-wakatime")
 
 (defconst wakatime-error-codes '((api . 102)))
 
