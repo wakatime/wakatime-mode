@@ -9,7 +9,7 @@ Heads Up! WakaTime depends on [Python](http://www.python.org/getit/) being insta
 
 1. Install wakatime-mode for Emacs using [MELPA](http://melpa.milkbox.net/#/wakatime-mode).
 
-2. Enter your [api key](https://wakatime.com/settings#apikey) from https://wakatime.com/settings#apikey, then press `enter`.
+2. Enter your [api key](https://wakatime.com/settings#apikey), then press `enter`.
 
 3. Install [wakatime-cli](https://pypi.python.org/pypi/wakatime) with `pip install wakatime`.
 
