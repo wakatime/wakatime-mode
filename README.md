@@ -43,10 +43,6 @@ Optionally, point `wakatime-python-bin` to the absolute path of python on your s
 
 ## Troubleshooting Common Problems
 
-`error in process sentinel: Unexpected WakaTime error occured (code 1)!`
-
-Exit code 1 usually means python wasn't found. Find python by running `which python`, then add that path to your `init.el` file with `(setq wakatime-python-bin "/path/to/python")`.
-
 To be sure heartbeats are getting sent, turn on debug mode by adding this line to your `~/.wakatime.cfg` file:
 
     debug = true
