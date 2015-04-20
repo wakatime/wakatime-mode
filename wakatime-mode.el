@@ -32,7 +32,8 @@
 
 (defconst wakatime-version "1.0.0")
 (defconst wakatime-user-agent "emacs-wakatime")
-(setq noprompt nil)
+(setq wakatime-noprompt nil)
+(setq wakatime-initialized nil)
 
 (defgroup wakatime nil
   "Customizations for WakaTime"
@@ -59,36 +60,74 @@
 )
 
 (defun wakatime-init ()
-  (if (or (not wakatime-api-key) (string= "" wakatime-api-key))
-    (wakatime-prompt-api-key)
-  )
-  (if (or (not wakatime-cli-path) (not (file-exists-p wakatime-cli-path)))
-    (wakatime-prompt-cli-path)
+  (if (not wakatime-initialized)
+    (message "Initializing WakaTime v%s" wakatime-version)
+    (if (or (not wakatime-api-key) (string= "" wakatime-api-key))
+      (wakatime-prompt-api-key)
+    )
+    (if (or (not wakatime-cli-path) (not (file-exists-p wakatime-cli-path)))
+      (wakatime-prompt-cli-path)
+    )
+    (if (or (not wakatime-python-bin) (not (wakatime-python-exists wakatime-python-bin)))
+      (wakatime-find-python-bin)
+    )
+    (if (or (not wakatime-python-bin) (not (wakatime-python-exists wakatime-python-bin)))
+      (wakatime-prompt-python-bin)
+    )
+    (setq wakatime-initialized t)
   )
 )
 
 (defun wakatime-prompt-api-key ()
   "Prompt user for api key."
-  (when (and (= (recursion-depth) 0) (not noprompt))
-    (setq noprompt t)
+  (when (and (= (recursion-depth) 0) (not wakatime-noprompt))
+    (setq wakatime-noprompt t)
     (let ((api-key (read-string "WakaTime API key: ")))
       (customize-set-variable 'wakatime-api-key api-key)
       (customize-save-customized)
     )
-    (setq noprompt nil)
+    (setq wakatime-noprompt nil)
   )
 )
 
 (defun wakatime-prompt-cli-path ()
   "Prompt user for cli path."
-  (when (and (= (recursion-depth) 0) (not noprompt))
-    (setq noprompt t)
+  (when (and (= (recursion-depth) 0) (not wakatime-noprompt))
+    (setq wakatime-noprompt t)
     (let ((cli-path (read-file-name "WakaTime CLI script path: ")))
       (customize-set-variable 'wakatime-cli-path cli-path)
       (customize-save-customized)
     )
-    (setq noprompt nil)
+    (setq wakatime-noprompt nil)
   )
+)
+
+(defun wakatime-find-python-bin ()
+  "Return location of python binary from PATH."
+  (let ((python-bin (shell-command-to-string "which python")))
+    (customize-set-variable 'wakatime-python-bin python-bin)
+    (customize-save-customized)
+  )
+)
+
+(defun wakatime-prompt-python-bin ()
+  "Prompt user for path to python binary."
+  (when (and (= (recursion-depth) 0) (not wakatime-noprompt))
+    (setq wakatime-noprompt t)
+    (let ((python-bin (read-string "Path to python binary: ")))
+      (customize-set-variable 'wakatime-python-bin python-bin)
+      (customize-save-customized)
+    )
+    (setq wakatime-noprompt nil)
+  )
+  nil
+)
+
+(defun wakatime-python-exists (location)
+  "Check if python exists in the specified path location."
+  (= (condition-case nil (call-process location nil nil nil "--version") (error 1)) 0)
+  ;(= (call-process location nil nil nil "--version") 0)
+  ;(message "2")
 )
 
 (defun wakatime-client-command (savep)
@@ -178,7 +217,5 @@
 
 ;;;###autoload
 (define-globalized-minor-mode global-wakatime-mode wakatime-mode (lambda () (wakatime-mode 1)))
-  
-(message "Initializing WakaTime v%s" wakatime-version)
 
 (provide 'wakatime-mode)
