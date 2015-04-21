@@ -61,6 +61,7 @@
 
 (defun wakatime-init ()
   (unless wakatime-initialized
+    (setq wakatime-initialized t)
     (when (or (not wakatime-api-key) (string= "" wakatime-api-key))
       (wakatime-prompt-api-key)
     )
@@ -73,7 +74,6 @@
     (when (or (not wakatime-python-bin) (not (wakatime-python-exists wakatime-python-bin)))
       (wakatime-prompt-python-bin)
     )
-    (setq wakatime-initialized t)
   )
 )
 
