@@ -130,7 +130,7 @@
 (defun wakatime-client-command (savep)
   "Return client command executable and arguments.
    Set SAVEP to non-nil for write action."
-  (format "%s %s --file %s %s --plugin %s/%s --key %s --time %.2f"
+  (format "%s %s --file \"%s\" %s --plugin %s/%s --key %s --time %.2f"
     wakatime-python-bin
     wakatime-cli-path
     (buffer-file-name (current-buffer))
