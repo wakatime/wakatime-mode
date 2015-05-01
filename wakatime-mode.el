@@ -69,9 +69,6 @@
       (wakatime-prompt-cli-path)
     )
     (when (or (not wakatime-python-bin) (not (wakatime-python-exists wakatime-python-bin)))
-      (wakatime-find-python-bin)
-    )
-    (when (or (not wakatime-python-bin) (not (wakatime-python-exists wakatime-python-bin)))
       (wakatime-prompt-python-bin)
     )
   )
@@ -98,14 +95,6 @@
       (customize-save-customized)
     )
     (setq wakatime-noprompt nil)
-  )
-)
-
-(defun wakatime-find-python-bin ()
-  "Return location of python binary from PATH."
-  (let ((python-bin (shell-command-to-string "which python")))
-    (customize-set-variable 'wakatime-python-bin python-bin)
-    (customize-save-customized)
   )
 )
 
