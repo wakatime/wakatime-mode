@@ -3,9 +3,10 @@
 ;; Copyright (C) 2013  Gabor Torok <gabor@20y.hu>
 
 ;; Author: Gabor Torok <gabor@20y.hu>
+;; Maintainer: Alan Hamlett <alan@wakatime.com>
 ;; Website: https://wakatime.com
 ;; Keywords: calendar, comm
-;; Version: 1.0.0
+;; Version: 1.0.1
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@
 ;; `wakatime-cli-path' to the absolute path of the CLI script
 ;; (wakatime-cli.py).
 
-(defconst wakatime-version "1.0.0")
+(defconst wakatime-version "1.0.1")
 (defconst wakatime-user-agent "emacs-wakatime")
 (setq wakatime-noprompt nil)
 (setq wakatime-initialized nil)
