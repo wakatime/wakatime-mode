@@ -34,7 +34,8 @@
 (defconst wakatime-version "1.0.2")
 (defconst wakatime-user-agent "emacs-wakatime")
 (setq wakatime-noprompt nil)
-(setq wakatime-initialized nil)
+(setq wakatime-init-started nil)
+(setq wakatime-init-finished nil)
 
 (defgroup wakatime nil
   "Customizations for WakaTime"
@@ -61,8 +62,8 @@
 )
 
 (defun wakatime-init ()
-  (unless wakatime-initialized
-    (setq wakatime-initialized t)
+  (unless wakatime-init-started
+    (setq wakatime-init-started t)
     (when (or (not wakatime-api-key) (string= "" wakatime-api-key))
       (wakatime-prompt-api-key)
     )
@@ -72,6 +73,7 @@
     (when (or (not wakatime-python-bin) (not (wakatime-python-exists wakatime-python-bin)))
       (wakatime-prompt-python-bin)
     )
+    (setq wakatime-init-finished t)
   )
 )
 
@@ -174,19 +176,37 @@
   (when (buffer-file-name (current-buffer))
     (wakatime-call (wakatime-client-command t))))
 
-(defun wakatime-turn-on ()
-  "Turn on WakaTime."
-  (wakatime-init)
+(defun wakatime-bind-hooks ()
+  "Watch for activity in buffers."
   (add-hook 'after-save-hook 'wakatime-save nil t)
   (add-hook 'auto-save-hook 'wakatime-save nil t)
   (add-hook 'first-change-hook 'wakatime-ping nil t)
 )
 
-(defun wakatime-turn-off ()
-  "Turn off WakaTime."
+(defun wakatime-unbind-hooks ()
+  "Stop watching for activity in buffers."
   (remove-hook 'after-save-hook 'wakatime-save t)
   (remove-hook 'auto-save-hook 'wakatime-save t)
   (remove-hook 'first-change-hook 'wakatime-ping t)
+)
+
+(defun wakatime-turn-on (defer)
+  "Turn on WakaTime."
+  (if defer
+    (run-at-time "1 sec" nil 'wakatime-turn-on nil)
+    (let ()
+      (wakatime-init)
+      (if wakatime-init-finished
+        (wakatime-bind-hooks)
+        (run-at-time "1 sec" nil 'wakatime-turn-on nil)
+      )
+    )
+  )
+)
+
+(defun wakatime-turn-off ()
+  "Turn off WakaTime."
+  (wakatime-unbind-hooks)
 )
 
 ;;;###autoload
@@ -198,7 +218,7 @@
   :group      'wakatime
   (cond
     (noninteractive (setq wakatime-mode nil))
-    (wakatime-mode (wakatime-turn-on))
+    (wakatime-mode (wakatime-turn-on t))
     (t (wakatime-turn-off))
   )
 )
