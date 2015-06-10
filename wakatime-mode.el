@@ -31,6 +31,8 @@
 ;; `wakatime-cli-path' to the absolute path of the CLI script
 ;; (wakatime-cli.py).
 
+;;; Code:
+
 (defconst wakatime-version "1.0.2")
 (defconst wakatime-user-agent "emacs-wakatime")
 (setq wakatime-noprompt nil)
