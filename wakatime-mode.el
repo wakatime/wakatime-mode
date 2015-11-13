@@ -35,9 +35,9 @@
 
 (defconst wakatime-version "1.0.2")
 (defconst wakatime-user-agent "emacs-wakatime")
-(setq wakatime-noprompt nil)
-(setq wakatime-init-started nil)
-(setq wakatime-init-finished nil)
+(defvar wakatime-noprompt nil)
+(defvar wakatime-init-started nil)
+(defvar wakatime-init-finished nil)
 
 (defgroup wakatime nil
   "Customizations for WakaTime"
