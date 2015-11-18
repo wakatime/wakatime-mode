@@ -229,3 +229,4 @@
 (define-globalized-minor-mode global-wakatime-mode wakatime-mode (lambda () (wakatime-mode 1)))
 
 (provide 'wakatime-mode)
+;;; wakatime-mode.el ends here
