@@ -38,6 +38,7 @@
 (defvar wakatime-noprompt nil)
 (defvar wakatime-init-started nil)
 (defvar wakatime-init-finished nil)
+(defvar wakatime-python-path nil)
 
 (defgroup wakatime nil
   "Customizations for WakaTime"
@@ -63,11 +64,30 @@
   :group 'wakatime
 )
 
+(defun wakatime-guess-actual-script-path (path)
+  (let ((true-path (file-truename path)))
+    (cond
+     ((string-match-p "\\.pyenv" true-path) ; pyenv
+      (with-temp-buffer
+        (call-process "pyenv" nil t nil "which" "wakatime")
+        (delete-char -1) ; delete newline at the end of output
+        (buffer-string)))
+     ((string-match-p "Cellar" true-path)  ; Homebrew
+      (let* ((libexec (format "%slibexec/" (file-name-directory (directory-file-name (file-name-directory true-path)))))
+             (python-path (format "%slib/python2.7/site-packages" libexec)))
+        (setq wakatime-python-path python-path)
+        (format "%sbin/wakatime" libexec)))
+     (t path))))
+
 (defun wakatime-init ()
   (unless wakatime-init-started
     (setq wakatime-init-started t)
     (when (or (not wakatime-api-key) (string= "" wakatime-api-key))
       (wakatime-prompt-api-key)
+    )
+    (when (null wakatime-cli-path)
+      (customize-set-variable 'wakatime-cli-path
+                              (wakatime-guess-actual-script-path (executable-find "wakatime")))
     )
     (when (or (not wakatime-cli-path) (not (file-exists-p wakatime-cli-path)))
       (wakatime-prompt-cli-path)
@@ -138,8 +158,11 @@
 
 (defun wakatime-call (command)
   "Call WakaTime COMMAND."
-  (let
+  (let*
     (
+      (process-environment (if wakatime-python-path
+                               (cons (format "PYTHONPATH=%s" wakatime-python-path) process-environment)
+                             process-environment))
       (process
         (start-process
           "Shell"
