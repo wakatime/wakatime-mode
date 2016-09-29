@@ -248,6 +248,12 @@
   (wakatime-unbind-hooks)
 )
 
+(defun wakatime-validate-api-key (key)
+  "Check if the provided key is a valid API key."
+
+  (not (not (string-match "^[[:xdigit:]]\\{32\\}$"
+                          (replace-regexp-in-string "-" "" key)))))
+
 ;;;###autoload
 (define-minor-mode wakatime-mode
   "Toggle WakaTime (WakaTime mode)."
