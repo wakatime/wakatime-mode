@@ -82,9 +82,6 @@
 (defun wakatime-init ()
   (unless wakatime-init-started
     (setq wakatime-init-started t)
-    (when (or (not wakatime-api-key) (string= "" wakatime-api-key))
-      (wakatime-prompt-api-key)
-    )
     (when (null wakatime-cli-path)
       (customize-set-variable 'wakatime-cli-path
                               (wakatime-guess-actual-script-path (executable-find "wakatime")))
@@ -141,25 +138,32 @@
   (= (condition-case nil (call-process location nil nil nil "--version") (error 1)) 0)
 )
 
-(defun wakatime-client-command (savep)
+(defun wakatime-client-command (savep &optional dont-use-key)
   "Return client command executable and arguments.
-   Set SAVEP to non-nil for write action."
-  (format "%s %s --file \"%s\" %s --plugin %s/%s --key %s --time %.2f"
-    wakatime-python-bin
-    wakatime-cli-path
-    (buffer-file-name (current-buffer))
-    (if savep "--write" "")
-    wakatime-user-agent
-    wakatime-version
-    wakatime-api-key
-    (float-time)
+   Set SAVEP to non-nil for write action.
+   Set DONT-USE-KEY to t if you want to omit --key from the command
+   line."
+  (let ((key (if dont-use-key
+                 (format "--key %s" wakatime-api-key)
+               "")))
+    (format "%s %s --file \"%s\" %s --plugin %s/%s %s --time %.2f"
+      wakatime-python-bin
+      wakatime-cli-path
+      (buffer-file-name (current-buffer))
+      (if savep "--write" "")
+      wakatime-user-agent
+      wakatime-version
+      key
+      (float-time)
+    )
   )
 )
 
-(defun wakatime-call (command)
-  "Call WakaTime COMMAND."
+(defun wakatime-call (savep &optional retrying)
+  "Call WakaTime command."
   (let*
     (
+      (command (wakatime-client-command savep t))
       (process-environment (if wakatime-python-path
                                (cons (format "PYTHONPATH=%s" wakatime-python-path) process-environment)
                              process-environment))
@@ -182,6 +186,16 @@
             (when (and (not (= 0 exit-status)) (not (= 102 exit-status)))
               (error "WakaTime Error (%s)" exit-status)
             )
+            (when (= 102 exit-status)
+              ; If we are retrying already, error out
+              (if retrying
+                  (error "WakaTime Error (%s)" exit-status)
+                ; otherwise, ask for an API key and call ourselves
+                ; recursively
+                (wakatime-prompt-api-key)
+                (wakatime-call savep t)
+              )
+            )
           )
         )
       )
@@ -194,12 +208,12 @@
 (defun wakatime-ping ()
   "Send ping notice to WakaTime."
   (when (buffer-file-name (current-buffer))
-    (wakatime-call (wakatime-client-command nil))))
+    (wakatime-call nil)))
 
 (defun wakatime-save ()
   "Send save notice to WakaTime."
   (when (buffer-file-name (current-buffer))
-    (wakatime-call (wakatime-client-command t))))
+    (wakatime-call t)))
 
 (defun wakatime-bind-hooks ()
   "Watch for activity in buffers."
