@@ -144,8 +144,8 @@
    Set DONT-USE-KEY to t if you want to omit --key from the command
    line."
   (let ((key (if dont-use-key
-                 (format "--key %s" wakatime-api-key)
-               "")))
+                 ""
+               (format "--key %s" wakatime-api-key))))
     (format "%s %s --file \"%s\" %s --plugin %s/%s %s --time %.2f"
       wakatime-python-bin
       wakatime-cli-path
@@ -179,25 +179,25 @@
     )
 
     (set-process-sentinel process
-      (lambda (process signal)
-        (when (memq (process-status process) '(exit signal))
-          (kill-buffer (process-buffer process))
-          (let ((exit-status (process-exit-status process)))
-            (when (and (not (= 0 exit-status)) (not (= 102 exit-status)))
-              (error "WakaTime Error (%s)" exit-status)
-            )
-            (when (= 102 exit-status)
-              ; If we are retrying already, error out
-              (if retrying
-                  (error "WakaTime Error (%s)" exit-status)
-                ; otherwise, ask for an API key and call ourselves
-                ; recursively
-                (wakatime-prompt-api-key)
-                (wakatime-call savep t)
-              )
-            )
-          )
-        )
+      `(lambda (process signal)
+         (when (memq (process-status process) '(exit signal))
+           (kill-buffer (process-buffer process))
+           (let ((exit-status (process-exit-status process)))
+             (when (and (not (= 0 exit-status)) (not (= 102 exit-status)))
+               (error "WakaTime Error (%s)" exit-status)
+             )
+             (when (= 102 exit-status)
+               ; If we are retrying already, error out
+               (if retrying
+                   (error "WakaTime Error (%s)" exit-status)
+                 ; otherwise, ask for an API key and call ourselves
+                 ; recursively
+                 (wakatime-prompt-api-key)
+                 (wakatime-call savep t)
+               )
+             )
+           )
+         )
       )
     )
 
