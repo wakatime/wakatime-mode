@@ -144,8 +144,8 @@
    Set DONT-USE-KEY to t if you want to omit --key from the command
    line."
   (let ((key (if dont-use-key
-                 (format "--key %s" wakatime-api-key)
-               "")))
+                 ""
+               (format "--key %s" wakatime-api-key))))
     (format "%s %s --file \"%s\" %s --plugin %s/%s %s --time %.2f"
       wakatime-python-bin
       wakatime-cli-path
