@@ -179,25 +179,25 @@
     )
 
     (set-process-sentinel process
-      (lambda (process signal)
-        (when (memq (process-status process) '(exit signal))
-          (kill-buffer (process-buffer process))
-          (let ((exit-status (process-exit-status process)))
-            (when (and (not (= 0 exit-status)) (not (= 102 exit-status)))
-              (error "WakaTime Error (%s)" exit-status)
-            )
-            (when (= 102 exit-status)
-              ; If we are retrying already, error out
-              (if retrying
-                  (error "WakaTime Error (%s)" exit-status)
-                ; otherwise, ask for an API key and call ourselves
-                ; recursively
-                (wakatime-prompt-api-key)
-                (wakatime-call savep t)
-              )
-            )
-          )
-        )
+      `(lambda (process signal)
+         (when (memq (process-status process) '(exit signal))
+           (kill-buffer (process-buffer process))
+           (let ((exit-status (process-exit-status process)))
+             (when (and (not (= 0 exit-status)) (not (= 102 exit-status)))
+               (error "WakaTime Error (%s)" exit-status)
+             )
+             (when (= 102 exit-status)
+               ; If we are retrying already, error out
+               (if retrying
+                   (error "WakaTime Error (%s)" exit-status)
+                 ; otherwise, ask for an API key and call ourselves
+                 ; recursively
+                 (wakatime-prompt-api-key)
+                 (wakatime-call savep t)
+               )
+             )
+           )
+         )
       )
     )
 
