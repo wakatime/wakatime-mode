@@ -188,12 +188,12 @@
              )
              (when (= 102 exit-status)
                ; If we are retrying already, error out
-               (if retrying
+               (if ,retrying
                    (error "WakaTime Error (%s)" exit-status)
                  ; otherwise, ask for an API key and call ourselves
                  ; recursively
                  (wakatime-prompt-api-key)
-                 (wakatime-call savep t)
+                 (wakatime-call ,savep t)
                )
              )
            )
