@@ -186,7 +186,7 @@
              (when (and (not (= 0 exit-status)) (not (= 102 exit-status)))
                (error "WakaTime Error (%s)" exit-status)
              )
-             (when (= 104 exit-status)
+             (when (or (= 103 exit-status) (= 104 exit-status))
                ; If we are retrying already, error out
                (if ,retrying
                    (error "WakaTime Error (%s)" exit-status)
