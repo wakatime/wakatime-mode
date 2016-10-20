@@ -183,9 +183,7 @@
          (when (memq (process-status process) '(exit signal))
            (kill-buffer (process-buffer process))
            (let ((exit-status (process-exit-status process)))
-             (when (and (not (= 0 exit-status)) (not (= 102 exit-status)))
-               (error "WakaTime Error (%s)" exit-status)
-             )
+             ; first check for config and api-key error
              (when (or (= 103 exit-status) (= 104 exit-status))
                ; If we are retrying already, error out
                (if ,retrying
@@ -195,6 +193,10 @@
                  (wakatime-prompt-api-key)
                  (wakatime-call ,savep t)
                )
+             )
+             ; finally throw unexpected errors
+             (when (not (= 0 exit-status))
+               (error "WakaTime Error (%s)" exit-status)
              )
            )
          )
