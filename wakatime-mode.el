@@ -163,7 +163,8 @@
   "Call WakaTime command."
   (let*
     (
-      (command (wakatime-client-command savep t))
+      (dont-use-key (or (not wakatime-api-key) (string= "" wakatime-api-key)))
+      (command (wakatime-client-command savep dont-use-key))
       (process-environment (if wakatime-python-path
                                (cons (format "PYTHONPATH=%s" wakatime-python-path) process-environment)
                              process-environment))
