@@ -185,19 +185,19 @@
            (kill-buffer (process-buffer process))
            (let ((exit-status (process-exit-status process)))
              ; first check for config and api-key error
-             (when (or (= 103 exit-status) (= 104 exit-status))
-               ; If we are retrying already, error out
+             (cond
+              ((or (= 103 exit-status) (= 104 exit-status))
                (if ,retrying
                    (error "WakaTime Error (%s)" exit-status)
                  ; otherwise, ask for an API key and call ourselves
                  ; recursively
                  (wakatime-prompt-api-key)
                  (wakatime-call ,savep t)
-               )
-             )
-             ; finally throw unexpected errors
-             (when (not (= 0 exit-status))
+                 )
+              )
+              ((not (= 0 exit-status))
                (error "WakaTime Error (%s)" exit-status)
+              )
              )
            )
          )
