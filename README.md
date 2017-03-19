@@ -41,7 +41,7 @@ Point `wakatime-cli-path` to the absolute path of [wakatime-cli](https://pypi.py
 Optionally, point `wakatime-python-bin` to the absolute path of python on your system. Defaults to `python` which only works if python is in your PATH.
 
 
-## Troubleshooting Common Problems
+## Troubleshooting
 
 To be sure heartbeats are getting sent, turn on debug mode by adding this line to your `~/.wakatime.cfg` file:
 
