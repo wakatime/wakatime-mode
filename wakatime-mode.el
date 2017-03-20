@@ -143,19 +143,15 @@
    Set SAVEP to non-nil for write action.
    Set DONT-USE-KEY to t if you want to omit --key from the command
    line."
-  (let ((key (if dont-use-key
-                 ""
-               (format "--key %s" wakatime-api-key))))
-    (format "%s %s --file \"%s\" %s --plugin %s/%s %s --time %.2f"
-      wakatime-python-bin
-      wakatime-cli-path
-      (buffer-file-name (current-buffer))
-      (if savep "--write" "")
-      wakatime-user-agent
-      wakatime-version
-      key
-      (float-time)
-    )
+  (format "%s \"%s\" --file \"%s\" --plugin \"%s/%s\" --time %.2f %s %s"
+    (unless (= "wakatime" wakatime-cli-path) (format "\"%s\"" wakatime-python-bin) "")
+    wakatime-cli-path
+    (buffer-file-name (current-buffer))
+    wakatime-user-agent
+    wakatime-version
+    (float-time)
+    (if savep "--write" "")
+    (unless dont-use-key (format "--key %s" wakatime-api-key) "")
   )
 )
 
