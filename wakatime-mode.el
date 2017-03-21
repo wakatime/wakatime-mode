@@ -64,20 +64,26 @@
   :group 'wakatime
 )
 
+(defun wakatime-debug (msg)
+  "Write a string to the *messages* buffer."
+  (message "%s" msg))
+
 (defun wakatime-guess-actual-script-path (path)
-  (let ((true-path (file-truename path)))
-    (cond
-     ((string-match-p "\\.pyenv" true-path) ; pyenv
-      (with-temp-buffer
-        (call-process "pyenv" nil t nil "which" "wakatime")
-        (delete-char -1) ; delete newline at the end of output
-        (buffer-string)))
-     ((string-match-p "Cellar" true-path)  ; Homebrew
-      (let* ((libexec (format "%slibexec/" (file-name-directory (directory-file-name (file-name-directory true-path)))))
-             (python-path (format "%slib/python2.7/site-packages" libexec)))
-        (setq wakatime-python-path python-path)
-        (format "%sbin/wakatime" libexec)))
-     (t path))))
+  (let ((true-path (if (null path) nil (file-truename path))))
+    (unless (null true-path)
+      (cond
+       ((string-match-p "\\.pyenv" true-path) ; pyenv
+        (with-temp-buffer
+          (call-process "pyenv" nil t nil "which" "wakatime")
+          (delete-char -1) ; delete newline at the end of output
+          (buffer-string)))
+       ((string-match-p "Cellar" true-path)  ; Homebrew
+        (let* ((libexec (format "%slibexec/" (file-name-directory (directory-file-name (file-name-directory true-path)))))
+               (python-path (format "%slib/python2.7/site-packages" libexec)))
+          (setq wakatime-python-path python-path)
+          (format "%sbin/wakatime" libexec)))
+       (t path))
+      nil)))
 
 (defun wakatime-init ()
   (unless wakatime-init-started
@@ -143,9 +149,9 @@
    Set SAVEP to non-nil for write action.
    Set DONT-USE-KEY to t if you want to omit --key from the command
    line."
-  (format "%s \"%s\" --file \"%s\" --plugin \"%s/%s\" --time %.2f %s %s"
+  (format "%s%s --file \"%s\" --plugin \"%s/%s\" --time %.2f %s %s"
     (unless (= "wakatime" wakatime-cli-path) (format "\"%s\"" wakatime-python-bin) "")
-    wakatime-cli-path
+    (unless (= "wakatime" wakatime-cli-path) (format "\"%s\"" wakatime-cli-path) "wakatime")
     (buffer-file-name (current-buffer))
     wakatime-user-agent
     wakatime-version
