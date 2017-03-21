@@ -43,26 +43,22 @@
 (defgroup wakatime nil
   "Customizations for WakaTime"
   :group 'convenience
-  :prefix "wakatime-"
-)
+  :prefix "wakatime-")
 
 (defcustom wakatime-api-key nil
   "API key for WakaTime."
   :type 'string
-  :group 'wakatime
-)
+  :group 'wakatime)
 
 (defcustom wakatime-cli-path nil
   "Path of CLI client for WakaTime."
   :type 'string
-  :group 'wakatime
-)
+  :group 'wakatime)
 
 (defcustom wakatime-python-bin "python"
   "Path of Python binary."
   :type 'string
-  :group 'wakatime
-)
+  :group 'wakatime)
 
 (defun wakatime-debug (msg)
   "Write a string to the *messages* buffer."
@@ -90,17 +86,13 @@
     (setq wakatime-init-started t)
     (when (null wakatime-cli-path)
       (customize-set-variable 'wakatime-cli-path
-                              (wakatime-guess-actual-script-path (executable-find "wakatime")))
-    )
+                              (wakatime-guess-actual-script-path (executable-find "wakatime"))))
     (when (or (not wakatime-cli-path) (not (file-exists-p wakatime-cli-path)))
-      (wakatime-prompt-cli-path)
-    )
+      (wakatime-prompt-cli-path))
     (when (or (not wakatime-python-bin) (not (wakatime-python-exists wakatime-python-bin)))
-      (wakatime-prompt-python-bin)
-    )
+      (wakatime-prompt-python-bin))
     (setq wakatime-init-finished t)
-  )
-)
+  ))
 
 (defun wakatime-prompt-api-key ()
   "Prompt user for api key."
@@ -111,20 +103,18 @@
       (customize-save-customized)
     )
     (setq wakatime-noprompt nil)
-  )
-)
+  ))
 
 (defun wakatime-prompt-cli-path ()
-  "Prompt user for cli path."
+  "Prompt user for cli.py path."
   (when (and (= (recursion-depth) 0) (not wakatime-noprompt))
     (setq wakatime-noprompt t)
-    (let ((cli-path (read-file-name "WakaTime CLI script path: ")))
+    (let ((cli-path (read-string "WakaTime CLI script path (wakatime/cli.py): ")))
       (customize-set-variable 'wakatime-cli-path cli-path)
       (customize-save-customized)
     )
     (setq wakatime-noprompt nil)
-  )
-)
+  ))
 
 (defun wakatime-prompt-python-bin ()
   "Prompt user for path to python binary."
@@ -136,39 +126,32 @@
     )
     (setq wakatime-noprompt nil)
   )
-  nil
-)
+  nil)
 
 (defun wakatime-python-exists (location)
   "Check if python exists in the specified path location."
-  (= (condition-case nil (call-process location nil nil nil "--version") (error 1)) 0)
-)
+  (= (condition-case nil (call-process location nil nil nil "--version") (error 1)) 0))
 
-(defun wakatime-client-command (savep &optional dont-use-key)
+(defun wakatime-client-command (savep)
   "Return client command executable and arguments.
-   Set SAVEP to non-nil for write action.
-   Set DONT-USE-KEY to t if you want to omit --key from the command
-   line."
-  (format "%s%s --file \"%s\" --plugin \"%s/%s\" --time %.2f %s %s"
-    (unless (= "wakatime" wakatime-cli-path) (format "\"%s\"" wakatime-python-bin) "")
-    (unless (= "wakatime" wakatime-cli-path) (format "\"%s\"" wakatime-cli-path) "wakatime")
+   Set SAVEP to non-nil for write action."
+  (format "%s%s--file \"%s\" --plugin \"%s/%s\" --time %.2f%s%s"
+    (if (or (null wakatime-cli-path) (string= "wakatime" wakatime-cli-path)) "" (format "%s " wakatime-python-bin))
+    (if (null wakatime-cli-path) "wakatime " (format "%s " wakatime-cli-path))
     (buffer-file-name (current-buffer))
     wakatime-user-agent
     wakatime-version
     (float-time)
-    (if savep "--write" "")
-    (unless dont-use-key (format "--key %s" wakatime-api-key) "")
-  )
-)
+    (if savep " --write" "")
+    (if (and (not (string= wakatime-api-key "")) (not (null wakatime-api-key))) (format " --key %s" wakatime-api-key) "")
+  ))
 
-(defun wakatime-call (savep &optional retrying)
+(defun wakatime-call (savep)
   "Call WakaTime command."
   (let*
     (
-      (command (wakatime-client-command savep t))
-      (process-environment (if wakatime-python-path
-                               (cons (format "PYTHONPATH=%s" wakatime-python-path) process-environment)
-                             process-environment))
+      (command (wakatime-client-command savep))
+      (process-environment (if wakatime-python-path (cons (format "PYTHONPATH=%s" wakatime-python-path) process-environment) process-environment))
       (process
         (start-process
           "Shell"
@@ -186,16 +169,12 @@
            (kill-buffer (process-buffer process))
            (let ((exit-status (process-exit-status process)))
              (when (and (not (= 0 exit-status)) (not (= 102 exit-status)))
-               (error "WakaTime Error (%s)" exit-status)
-             )
-             (when (or (= 103 exit-status) (= 104 exit-status))
-               ; If we are retrying already, error out
-               (if ,retrying
-                   (error "WakaTime Error (%s)" exit-status)
-                 ; otherwise, ask for an API key and call ourselves
-                 ; recursively
-                 (wakatime-prompt-api-key)
-                 (wakatime-call ,savep t)
+               (cond
+                 ((= exit-status 103) (error "WakaTime Error (%s) Config file parse error. Check your ~/.wakatime.cfg file." exit-status))
+                 ((= exit-status 104) (error "WakaTime Error (%s) Invalid API Key. Set your api key with: (custom-set-variables '(wakatime-api-key \"XXXX\"))" exit-status))
+                 ((= exit-status 105) (error "WakaTime Error (%s) Unknown wakatime-cli error. Please check your ~/.wakatime.log file and open a new issue at https://github.com/wakatime/wakatime-mode" exit-status))
+                 ((= exit-status 106) (error "WakaTime Error (%s) Malformed heartbeat error. Please check your ~/.wakatime.log file and open a new issue at https://github.com/wakatime/wakatime-mode" exit-status))
+                 (t (error "WakaTime Error (%s) Make sure this command runs in a Terminal: %s" exit-status (wakatime-client-command nil)))
                )
              )
            )
@@ -204,8 +183,7 @@
     )
 
     (set-process-query-on-exit-flag process nil)
-  )
-)
+  ))
 
 (defun wakatime-ping ()
   "Send ping notice to WakaTime."
@@ -221,15 +199,13 @@
   "Watch for activity in buffers."
   (add-hook 'after-save-hook 'wakatime-save nil t)
   (add-hook 'auto-save-hook 'wakatime-save nil t)
-  (add-hook 'first-change-hook 'wakatime-ping nil t)
-)
+  (add-hook 'first-change-hook 'wakatime-ping nil t))
 
 (defun wakatime-unbind-hooks ()
   "Stop watching for activity in buffers."
   (remove-hook 'after-save-hook 'wakatime-save t)
   (remove-hook 'auto-save-hook 'wakatime-save t)
-  (remove-hook 'first-change-hook 'wakatime-ping t)
-)
+  (remove-hook 'first-change-hook 'wakatime-ping t))
 
 (defun wakatime-turn-on (defer)
   "Turn on WakaTime."
@@ -242,19 +218,11 @@
         (run-at-time "1 sec" nil 'wakatime-turn-on nil)
       )
     )
-  )
-)
+  ))
 
 (defun wakatime-turn-off ()
   "Turn off WakaTime."
-  (wakatime-unbind-hooks)
-)
-
-(defun wakatime-validate-api-key (key)
-  "Check if the provided key is a valid API key."
-
-  (not (not (string-match "^[[:xdigit:]]\\{32\\}$"
-                          (replace-regexp-in-string "-" "" key)))))
+  (wakatime-unbind-hooks))
 
 ;;;###autoload
 (define-minor-mode wakatime-mode
@@ -267,8 +235,7 @@
     (noninteractive (setq wakatime-mode nil))
     (wakatime-mode (wakatime-turn-on t))
     (t (wakatime-turn-off))
-  )
-)
+  ))
 
 ;;;###autoload
 (define-globalized-minor-mode global-wakatime-mode wakatime-mode (lambda () (wakatime-mode 1)))
