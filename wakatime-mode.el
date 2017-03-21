@@ -165,7 +165,8 @@
   "Call WakaTime command."
   (let*
     (
-      (command (wakatime-client-command savep t))
+      (dont-use-key (or (not wakatime-api-key) (string= "" wakatime-api-key)))
+      (command (wakatime-client-command savep dont-use-key))
       (process-environment (if wakatime-python-path
                                (cons (format "PYTHONPATH=%s" wakatime-python-path) process-environment)
                              process-environment))
@@ -185,18 +186,20 @@
          (when (memq (process-status process) '(exit signal))
            (kill-buffer (process-buffer process))
            (let ((exit-status (process-exit-status process)))
-             (when (and (not (= 0 exit-status)) (not (= 102 exit-status)))
-               (error "WakaTime Error (%s)" exit-status)
-             )
-             (when (or (= 103 exit-status) (= 104 exit-status))
-               ; If we are retrying already, error out
+             ; first check for config and api-key error
+             (cond
+              ((or (= 103 exit-status) (= 104 exit-status))
                (if ,retrying
                    (error "WakaTime Error (%s)" exit-status)
                  ; otherwise, ask for an API key and call ourselves
                  ; recursively
                  (wakatime-prompt-api-key)
                  (wakatime-call ,savep t)
-               )
+                 )
+              )
+              ((not (= 0 exit-status))
+               (error "WakaTime Error (%s)" exit-status)
+              )
              )
            )
          )
