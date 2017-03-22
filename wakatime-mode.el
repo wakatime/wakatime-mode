@@ -66,7 +66,7 @@
 
 (defun wakatime-guess-actual-script-path (path)
   (let ((true-path (if (null path) nil (file-truename path))))
-    (unless (null true-path)
+    (if (not (null true-path))
       (cond
        ((string-match-p "\\.pyenv" true-path) ; pyenv
         (with-temp-buffer
