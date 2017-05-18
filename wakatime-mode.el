@@ -100,7 +100,7 @@
     (when (s-blank wakatime-cli-path)
       (wakatime-prompt-cli-path))
     (when (not (s-blank wakatime-cli-path))
-      (if (not (string-match-p "\\.cli\\.py$" wakatime-cli-path))
+      (if (not (string-match-p "cli\\.py$" wakatime-cli-path))
         (customize-set-variable 'wakatime-python-bin nil)
         (when (s-blank wakatime-python-bin)
           (wakatime-prompt-python-bin))))
