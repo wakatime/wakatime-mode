@@ -27,9 +27,9 @@
 ;; `wakatime-mode'. If you wish to activate it globally, use
 ;; `global-wakatime-mode'.
 
-;; Set variable `wakatime-api-key' to your API key. Point
+;; Set variable `wakatime-api-key' to your API key on Line number 114. Point
 ;; `wakatime-cli-path' to the absolute path of the CLI script
-;; (wakatime-cli.py).
+;; (wakatime-cli.py) on Line number 123.
 
 ;;; Code:
 
