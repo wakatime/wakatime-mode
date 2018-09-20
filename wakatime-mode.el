@@ -213,12 +213,16 @@
 
 (defun wakatime-ping ()
   "Send ping notice to WakaTime."
-  (when (buffer-file-name (current-buffer))
+  (when (and
+         (buffer-file-name (current-buffer))
+         (not (auto-save-file-name-p (buffer-file-name (current-buffer)))))
     (wakatime-call nil)))
 
 (defun wakatime-save ()
   "Send save notice to WakaTime."
-  (when (buffer-file-name (current-buffer))
+  (when (and
+         (buffer-file-name (current-buffer))
+         (not (auto-save-file-name-p (buffer-file-name (current-buffer)))))
     (wakatime-call t)))
 
 (defun wakatime-bind-hooks ()
