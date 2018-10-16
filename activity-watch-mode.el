@@ -186,7 +186,7 @@ Argument DEFER Wether initialization should be deferred."
 ;;;###autoload
 (define-minor-mode activity-watch-mode
   "Toggle Activity-Watch (Activity-Watch mode)."
-  :lighter    " waka"
+  :lighter    " activity-watch"
   :init-value nil
   :global     nil
   :group      'activity-watch
@@ -196,7 +196,10 @@ Argument DEFER Wether initialization should be deferred."
    (t (activity-watch-turn-off))))
 
 ;;;###autoload
-(define-globalized-minor-mode global-activity-watch-mode activity-watch-mode (lambda () (activity-watch-mode 1)) :require 'activity-watch-mode)
+(define-globalized-minor-mode global-activity-watch-mode
+  activity-watch-mode
+  (lambda () (activity-watch-mode 1))
+  :require 'activity-watch-mode)
 
 (provide 'activity-watch-mode)
 ;;; activity-watch-mode.el ends here
