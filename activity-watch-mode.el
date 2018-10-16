@@ -63,7 +63,7 @@
 (defun activity-watch--s-blank (string)
   "Return non-nil if the STRING is empty or nil.  Expects string."
   (or (null string)
-    (zerop (length string))))
+      (zerop (length string))))
 
 (defun activity-watch--init ()
   "Initialize symbol ‘activity-watch-mode’."
@@ -93,23 +93,23 @@
 Argument TIME time at which the heartbeat was computed."
   (let ((project-name (projectile-project-name))
         (file-name (buffer-file-name (current-buffer))))
-  `((timestamp . ,(ert--format-time-iso8601 time))
-    (duration . 0)
-    (data . ((language . ,(if (activity-watch--s-blank (symbol-name major-mode)) "unknown" major-mode))
-             (project . ,(if (activity-watch--s-blank project-name) "unknown" project-name))
-             (file . ,(if (activity-watch--s-blank file-name) "unknown" file-name)))))))
+    `((timestamp . ,(ert--format-time-iso8601 time))
+      (duration . 0)
+      (data . ((language . ,(if (activity-watch--s-blank (symbol-name major-mode)) "unknown" major-mode))
+               (project . ,(if (activity-watch--s-blank project-name) "unknown" project-name))
+               (file . ,(if (activity-watch--s-blank file-name) "unknown" file-name)))))))
 
 
 (defun activity-watch--send-heartbeat (heartbeat)
   "Send HEARTBEAT to activity watch server."
-    (Request (concat activity-watch-api-host "/api/0/buckets/" (activity-watch--bucket-id) "/heartbeat")
-             :type "POST"
-             :params `(("pulsetime" . ,activity-watch-pulse-time))
-             :data (json-encode heartbeat)
-             :headers '(("Content-Type" . "application/json"))
-             :error (function*
-                       (lambda (&key data &allow-other-keys)
-                         (message data)))))
+  (Request (concat activity-watch-api-host "/api/0/buckets/" (activity-watch--bucket-id) "/heartbeat")
+           :type "POST"
+           :params `(("pulsetime" . ,activity-watch-pulse-time))
+           :data (json-encode heartbeat)
+           :headers '(("Content-Type" . "application/json"))
+           :error (function*
+                   (lambda (&key data &allow-other-keys)
+                     (message data)))))
 
 (defun activity-watch--call ()
   "Conditionally submit heartbeat to activity watch."
@@ -169,7 +169,7 @@ Argument TIME time at which the heartbeat was computed."
   "Turn on Activity-Watch.
 Argument DEFER Wether initialization should be deferred."
   (if defer
-    (run-at-time "1 sec" nil #'activity-watch-turn-on nil)
+      (run-at-time "1 sec" nil #'activity-watch-turn-on nil)
     (let ()
       (activity-watch--init)
       (if activity-watch-init-finished
@@ -190,9 +190,9 @@ Argument DEFER Wether initialization should be deferred."
   :global     nil
   :group      'activity-watch
   (cond
-    (noninteractive (setq activity-watch-mode nil))
-    (activity-watch-mode (activity-watch-turn-on t))
-    (t (activity-watch-turn-off))))
+   (noninteractive (setq activity-watch-mode nil))
+   (activity-watch-mode (activity-watch-turn-on t))
+   (t (activity-watch-turn-off))))
 
 ;;;###autoload
 (define-globalized-minor-mode global-activity-watch-mode activity-watch-mode (lambda () (activity-watch-mode 1)) :require 'activity-watch-mode)
