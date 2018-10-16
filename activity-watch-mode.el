@@ -7,6 +7,7 @@
 ;; Website: https://activitywatch.net
 ;; Homepage: https://github.com/pauldub/activity-watch-mode
 ;; Keywords: calendar, comm
+;; Package-Requires: ((emacs "24") (projectile "0") (request "0"))
 ;; Version: 1.0.0
 
 ;; This program is free software; you can redistribute it and/or modify
