@@ -1,4 +1,4 @@
-;;; activity-watch-mode.el --- Automatic time tracking extension.
+;;; activity-watch-mode.el --- Automatic time tracking extension. -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2013  Gabor Torok <gabor@20y.hu>
 
@@ -33,7 +33,7 @@
 ;; Requires request.el (https://tkf.github.io/emacs-request/)
 ;;
 
-;;; Dependencies: request
+;;; Dependencies: request, projectile
 
 ;;; Code:
 
@@ -85,7 +85,7 @@
                                   (type . "app.editor.activity")))
              :headers '(("Content-Type" . "application/json"))
              :success (function*
-                       (lambda (&key data &allow-other-keys)
+                       (lambda (&allow-other-keys)
                          (setq activity-watch-bucket-created t))))))
 
 (defun activity-watch--create-heartbeat (time)
@@ -134,10 +134,10 @@ Argument TIME time at which the heartbeat was computed."
 (defun activity-watch--start-timer ()
   "Start timers for heartbeat submission and idling."
   (if (not activity-watch-timer)
-      (setq activity-watch-timer (run-at-time t 2 'activity-watch--save)))
+      (setq activity-watch-timer (run-at-time t 2 #'activity-watch--save)))
   (if (not activity-watch-idle-timer)
       ;; stop the timer after 30s inactivity
-      (setq activity-watch-idle-timer (run-with-idle-timer 30 t 'activity-watch--stop-timer))))
+      (setq activity-watch-idle-timer (run-with-idle-timer 30 t #'activity-watch--stop-timer))))
 
 (defun activity-watch--stop-timer ()
   "Stop heartbeat submission timer."
@@ -153,28 +153,28 @@ Argument TIME time at which the heartbeat was computed."
 
 (defun activity-watch--bind-hooks ()
   "Watch for activity in buffers."
-  (add-hook 'pre-command-hook 'activity-watch--start-timer nil t)
-  (add-hook 'after-save-hook 'activity-watch--save nil t)
-  (add-hook 'auto-save-hook 'activity-watch--save nil t)
-  (add-hook 'first-change-hook 'activity-watch--save nil t))
+  (add-hook 'pre-command-hook #'activity-watch--start-timer nil t)
+  (add-hook 'after-save-hook #'activity-watch--save nil t)
+  (add-hook 'auto-save-hook #'activity-watch--save nil t)
+  (add-hook 'first-change-hook #'activity-watch--save nil t))
 
 (defun activity-watch--unbind-hooks ()
   "Stop watching for activity in buffers."
-  (remove-hook 'pre-command-hook 'activity-watch--start-timer t)
-  (remove-hook 'after-save-hook 'activity-watch--save t)
-  (remove-hook 'auto-save-hook 'activity-watch--save t)
-  (remove-hook 'first-change-hook 'activity-watch--save t))
+  (remove-hook 'pre-command-hook #'activity-watch--start-timer t)
+  (remove-hook 'after-save-hook #'activity-watch--save t)
+  (remove-hook 'auto-save-hook #'activity-watch--save t)
+  (remove-hook 'first-change-hook #'activity-watch--save t))
 
 (defun activity-watch-turn-on (defer)
   "Turn on Activity-Watch.
 Argument DEFER Wether initialization should be deferred."
   (if defer
-    (run-at-time "1 sec" nil 'activity-watch-turn-on nil)
+    (run-at-time "1 sec" nil #'activity-watch-turn-on nil)
     (let ()
       (activity-watch--init)
       (if activity-watch-init-finished
           (progn (activity-watch--bind-hooks) (activity-watch--start-timer))
-        (run-at-time "1 sec" nil 'activity-watch-turn-on nil)))))
+        (run-at-time "1 sec" nil #'activity-watch-turn-on nil)))))
 
 (defun activity-watch-turn-off ()
   "Turn off Activity-Watch."

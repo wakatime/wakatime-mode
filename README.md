@@ -4,7 +4,7 @@
 
 ## Installation
 
-Heads Up! ActivityWatch depends on [request.el](https://tkf.github.io/emacs-request/) being installed to work correctly.
+Heads Up! ActivityWatch depends on [request.el](https://tkf.github.io/emacs-request/) and [Projectile](https://github.com/bbatsov/projectile) being installed to work correctly.
 
 1. Install activity-watch-mode for Emacs using [MELPA](https://melpa.org/#/activity-watch-mode).
 
