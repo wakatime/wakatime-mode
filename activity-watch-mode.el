@@ -27,7 +27,7 @@
 ;; ActivityWatch mode based on https://github.com/wakatime/wakatime-mode
 ;;
 ;; Enable Activity-Watch for the current buffer by invoking
-;; `activity-watch-mode'. If you wish to activate it globally, use
+;; `activity-watch-mode'.  If you wish to activate it globally, use
 ;; `global-activity-watch-mode'.
 ;;
 ;; Requires request.el (https://tkf.github.io/emacs-request/)
@@ -61,19 +61,22 @@
   :group 'activity-watch)
 
 (defun activity-watch--s-blank (string)
-  "Return true if the string is empty or nil. Expects string."
+  "Return non-nil if the STRING is empty or nil.  Expects string."
   (or (null string)
     (zerop (length string))))
 
 (defun activity-watch--init ()
+  "Initialize symbol ‘activity-watch-mode’."
   (unless activity-watch-init-started
     (setq activity-watch-init-started t)
     (setq activity-watch-init-finished t)))
 
 (defun activity-watch--bucket-id ()
+  "Return the bucket-id to be used when submitting heartbeats."
   (concat "aw-watcher-emacs_" (system-name)))
 
 (defun activity-watch--create-bucket ()
+  "Create the editor bucket."
   (when (not activity-watch-bucket-created)
     (request (concat activity-watch-api-host "/api/0/buckets/" (activity-watch--bucket-id))
              :type "POST"
@@ -86,6 +89,8 @@
                          (setq activity-watch-bucket-created t))))))
 
 (defun activity-watch--create-heartbeat (time)
+  "Create heartbeart to sent to the activity watch server.
+Argument TIME time at which the heartbeat was computed."
   (let ((project-name (projectile-project-name))
         (file-name (buffer-file-name (current-buffer))))
   `((timestamp . ,(ert--format-time-iso8601 time))
@@ -96,7 +101,8 @@
 
 
 (defun activity-watch--send-heartbeat (heartbeat)
-    (request (concat activity-watch-api-host "/api/0/buckets/" (activity-watch--bucket-id) "/heartbeat")
+  "Send HEARTBEAT to activity watch server."
+    (Request (concat activity-watch-api-host "/api/0/buckets/" (activity-watch--bucket-id) "/heartbeat")
              :type "POST"
              :params `(("pulsetime" . ,activity-watch-pulse-time))
              :data (json-encode heartbeat)
@@ -106,6 +112,7 @@
                          (message data)))))
 
 (defun activity-watch--call ()
+  "Conditionally submit heartbeat to activity watch."
   (progn
     (activity-watch--create-bucket)
     (let ((now (float-time))
@@ -125,6 +132,7 @@
     (activity-watch--call)))
 
 (defun activity-watch--start-timer ()
+  "Start timers for heartbeat submission and idling."
   (if (not activity-watch-timer)
       (setq activity-watch-timer (run-at-time t 2 'activity-watch--save)))
   (if (not activity-watch-idle-timer)
@@ -132,11 +140,13 @@
       (setq activity-watch-idle-timer (run-with-idle-timer 30 t 'activity-watch--stop-timer))))
 
 (defun activity-watch--stop-timer ()
+  "Stop heartbeat submission timer."
   (when activity-watch-timer
     (cancel-timer activity-watch-timer)
     (setq activity-watch-timer nil)))
 
 (defun activity-watch--stop-idle-timer ()
+  "Stop idling timer."
   (when activity-watch-idle-timer
     (cancel-timer activity-watch-idle-timer)
     (setq activity-watch-idle-timer nil)))
@@ -156,7 +166,8 @@
   (remove-hook 'first-change-hook 'activity-watch--save t))
 
 (defun activity-watch-turn-on (defer)
-  "Turn on Activity-Watch."
+  "Turn on Activity-Watch.
+Argument DEFER Wether initialization should be deferred."
   (if defer
     (run-at-time "1 sec" nil 'activity-watch-turn-on nil)
     (let ()
