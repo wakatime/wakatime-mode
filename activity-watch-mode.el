@@ -71,13 +71,13 @@
     (setq activity-watch-init-finished t)))
 
 (defun activity-watch--bucket-id ()
-  (concat "aw-watcher-emacs_" system-name))
+  (concat "aw-watcher-emacs_" (system-name)))
 
 (defun activity-watch--create-bucket ()
   (when (not activity-watch-bucket-created)
     (request (concat activity-watch-api-host "/api/0/buckets/" (activity-watch--bucket-id))
              :type "POST"
-             :data (json-encode `((hostname . ,system-name)
+             :data (json-encode `((hostname . ,(system-name))
                                   (client . ,activity-watch-user-agent)
                                   (type . "app.editor.activity")))
              :headers '(("Content-Type" . "application/json"))
@@ -101,8 +101,6 @@
              :params `(("pulsetime" . ,activity-watch-pulse-time))
              :data (json-encode heartbeat)
              :headers '(("Content-Type" . "application/json"))
-             :success (function*
-                       (lambda (&key data &allow-other-keys)))
              :error (function*
                        (lambda (&key data &allow-other-keys)
                          (message data)))))
