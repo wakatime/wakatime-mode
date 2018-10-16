@@ -1,10 +1,11 @@
-;;; activity-watch-mode.el --- Automatic time tracking extension for Activity-Watch
+;;; activity-watch-mode.el --- Automatic time tracking extension.
 
 ;; Copyright (C) 2013  Gabor Torok <gabor@20y.hu>
 
 ;; Author: Gabor Torok <gabor@20y.hu>, Alan Hamlett <alan@wakatime.com>
 ;; Maintainer: Paul d'Hubert <paul.dhubert@ya.ru>
 ;; Website: https://activitywatch.net
+;; Homepage: https://github.com/pauldub/activity-watch-mode
 ;; Keywords: calendar, comm
 ;; Version: 1.0.0
 
@@ -59,7 +60,7 @@
   :type 'string
   :group 'activity-watch)
 
-(defun s-blank (string)
+(defun activity-watch--s-blank (string)
   "Return true if the string is empty or nil. Expects string."
   (or (null string)
     (zerop (length string))))
@@ -89,9 +90,9 @@
         (file-name (buffer-file-name (current-buffer))))
   `((timestamp . ,(ert--format-time-iso8601 time))
     (duration . 0)
-    (data . ((language . ,(if (s-blank (symbol-name major-mode)) "unknown" major-mode))
-             (project . ,(if (s-blank project-name) "unknown" project-name))
-             (file . ,(if (s-blank file-name) "unknown" file-name)))))))
+    (data . ((language . ,(if (activity-watch--s-blank (symbol-name major-mode)) "unknown" major-mode))
+             (project . ,(if (activity-watch--s-blank project-name) "unknown" project-name))
+             (file . ,(if (activity-watch--s-blank file-name) "unknown" file-name)))))))
 
 
 (defun activity-watch--send-heartbeat (heartbeat)
@@ -185,7 +186,7 @@
     (t (activity-watch-turn-off))))
 
 ;;;###autoload
-(define-globalized-minor-mode global-activity-watch-mode activity-watch-mode (lambda () (activity-watch-mode 1)))
+(define-globalized-minor-mode global-activity-watch-mode activity-watch-mode (lambda () (activity-watch-mode 1)) :require 'activity-watch-mode)
 
 (provide 'activity-watch-mode)
 ;;; activity-watch-mode.el ends here
