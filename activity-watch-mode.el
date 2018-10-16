@@ -103,7 +103,7 @@ Argument TIME time at which the heartbeat was computed."
 
 (defun activity-watch--send-heartbeat (heartbeat)
   "Send HEARTBEAT to activity watch server."
-  (Request (concat activity-watch-api-host "/api/0/buckets/" (activity-watch--bucket-id) "/heartbeat")
+  (request (concat activity-watch-api-host "/api/0/buckets/" (activity-watch--bucket-id) "/heartbeat")
            :type "POST"
            :params `(("pulsetime" . ,activity-watch-pulse-time))
            :data (json-encode heartbeat)
