@@ -1,5 +1,7 @@
 # Emacs Minor Mode for ActivityWatch
 
+[![MELPA](https://melpa.org/packages/activity-watch-mode-badge.svg)](https://melpa.org/#/activity-watch-mode)
+
 `activity-watch-mode` is an automatic time tracking extension for Emacs using [ActivityWatch](https://activitywatch.net/).
 
 ## Installation
