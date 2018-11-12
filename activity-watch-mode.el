@@ -114,17 +114,16 @@ Argument TIME time at which the heartbeat was computed."
 
 (defun activity-watch--call ()
   "Conditionally submit heartbeat to activity watch."
-  (progn
-    (activity-watch--create-bucket)
-    (let ((now (float-time))
-          (current-file-path (buffer-file-name (current-buffer)))
-          (time-delta (+ (or activity-watch-last-heartbeat-time 0) activity-watch-max-heartbeat-per-sec)))
-      (if (or (not (string= (or activity-watch-last-file-path "") current-file-path))
-              (< time-delta now))
-          (progn
-            (setq activity-watch-last-file-path current-file-path)
-            (setq activity-watch-last-heartbeat-time now)
-            (activity-watch--send-heartbeat (activity-watch--create-heartbeat (current-time))))))))
+  (activity-watch--create-bucket)
+  (let ((now (float-time))
+        (current-file-path (buffer-file-name (current-buffer)))
+        (time-delta (+ (or activity-watch-last-heartbeat-time 0) activity-watch-max-heartbeat-per-sec)))
+    (if (or (not (string= (or activity-watch-last-file-path "") current-file-path))
+            (< time-delta now))
+        (progn
+          (setq activity-watch-last-file-path current-file-path)
+          (setq activity-watch-last-heartbeat-time now)
+          (activity-watch--send-heartbeat (activity-watch--create-heartbeat (current-time)))))))
 
 (defun activity-watch--save ()
   "Send save notice to Activity-Watch."
@@ -134,9 +133,9 @@ Argument TIME time at which the heartbeat was computed."
 
 (defun activity-watch--start-timer ()
   "Start timers for heartbeat submission and idling."
-  (if (not activity-watch-timer)
+  (unless activity-watch-timer
       (setq activity-watch-timer (run-at-time t 2 #'activity-watch--save)))
-  (if (not activity-watch-idle-timer)
+  (unless activity-watch-idle-timer
       ;; stop the timer after 30s inactivity
       (setq activity-watch-idle-timer (run-with-idle-timer 30 t #'activity-watch--stop-timer))))
 
@@ -171,7 +170,7 @@ Argument TIME time at which the heartbeat was computed."
 Argument DEFER Wether initialization should be deferred."
   (if defer
       (run-at-time "1 sec" nil #'activity-watch-turn-on nil)
-    (let ()
+    (progn
       (activity-watch--init)
       (if activity-watch-init-finished
           (progn (activity-watch--bind-hooks) (activity-watch--start-timer))
