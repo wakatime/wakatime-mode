@@ -38,6 +38,9 @@
 
 ;;; Code:
 
+(require 'ert)
+(require 'request)
+
 (defconst activity-watch-version "1.0.0")
 (defconst activity-watch-user-agent "emacs-activity-watch")
 (defvar activity-watch-noprompt nil)
