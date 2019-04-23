@@ -40,6 +40,8 @@
 
 (require 'ert)
 (require 'request)
+(require 'json)
+(require 'cl)
 
 (defconst activity-watch-version "1.0.0")
 (defconst activity-watch-user-agent "emacs-activity-watch")
