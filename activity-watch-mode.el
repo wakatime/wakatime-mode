@@ -66,6 +66,11 @@
   :type 'string
   :group 'activity-watch)
 
+(defcustom activity-watch-project-name-function #'projectile-project-name
+  "The function to use to get the current project's name."
+  :type 'function
+  :group 'activity-watch)
+
 (defun activity-watch--s-blank (string)
   "Return non-nil if the STRING is empty or nil.  Expects string."
   (or (null string)
@@ -97,7 +102,7 @@
 (defun activity-watch--create-heartbeat (time)
   "Create heartbeart to sent to the activity watch server.
 Argument TIME time at which the heartbeat was computed."
-  (let ((project-name (projectile-project-name))
+  (let ((project-name (apply (list activity-watch-project-name-function)))
         (file-name (buffer-file-name (current-buffer))))
     `((timestamp . ,(ert--format-time-iso8601 time))
       (duration . 0)

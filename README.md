@@ -25,6 +25,10 @@ Enable ActivityWatch for the current buffer by invoking `M-x activity-watch-mode
 
 Set variable `activity-watch-api-host` to your activity watch local instance (default to `http://localhost:5600`).
 
+The default configuration expects `projectile` to be available and uses it to
+infer the current project's name. You can change this behaviour by setting the
+`activity-watch-project-name-function` custom variable to another function.
+
 ## Acknowledgments
 
 This mode is based of the [wakatime-mode](https://github.com/wakatime/wakatime-mode).
