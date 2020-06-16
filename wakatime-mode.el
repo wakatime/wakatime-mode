@@ -163,8 +163,8 @@
   "Return client command executable and arguments.
    Set SAVEP to non-nil for write action."
   (format "%s%s--file \"%s\" --plugin \"%s/%s\" --time %.2f%s%s"
-    (if (s-blank wakatime-python-bin) "" (format "%s " wakatime-python-bin))
-    (if (s-blank wakatime-cli-path) "wakatime " (format "%s " wakatime-cli-path))
+    (if (s-blank wakatime-python-bin) "" (format "\"%s\" " wakatime-python-bin))
+    (if (s-blank wakatime-cli-path) "wakatime " (format "\"%s\" " wakatime-cli-path))
     (buffer-file-name (current-buffer))
     wakatime-user-agent
     wakatime-version
