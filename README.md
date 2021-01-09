@@ -7,7 +7,7 @@
 
 Heads Up! WakaTime depends on [Python](http://www.python.org/getit/) being installed to work correctly.
 
-1. Install wakatime-mode for Emacs using [MELPA](https://melpa.org/#/wakatime-mode).
+1. Install wakatime-mode for Emacs using [MELPA](https://melpa.org/#/wakatime-mode) (Doom users see [these instructions][doom install] instead).
 
 2. Install [wakatime-cli](https://pypi.python.org/pypi/wakatime) with `pip install wakatime`.
 
@@ -48,3 +48,5 @@ To be sure heartbeats are getting sent, turn on debug mode by adding this line t
     debug = true
 
 Then run `tail -f ~/.wakatime.log` and make sure you see a 201 response code from the [WakaTime API](https://wakatime.com/api).
+
+[doom install]: https://medium.com/@el.gamerph/how-to-install-wakatime-in-doom-emacs-e5c582e15261
