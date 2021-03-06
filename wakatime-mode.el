@@ -169,12 +169,26 @@ the wakatime subprocess occurs."
 (defun wakatime-client-command (savep)
   "Return client command executable and arguments.
    Set SAVEP to non-nil for write action."
-  (format "%s%s--file \"%s\" --plugin \"%s/%s\" --time %.2f%s%s"
+  (format "%s%s--file \"%s\" --plugin \"%s/%s\" --language \"%s\" --time %.2f%s%s"
     (if (s-blank wakatime-python-bin) "" (format "\"%s\" " wakatime-python-bin))
     (if (s-blank wakatime-cli-path) "wakatime " (format "\"%s\" " wakatime-cli-path))
     (buffer-file-name (current-buffer))
     wakatime-user-agent
     wakatime-version
+    ;; --language LANGUAGE Optional language name. If valid, takes priority over auto-detected language.
+    ;; Emacs major-mode stores the main activity.
+    ;; Since major-mode names of the languages in majority of cases contain literal name of the language, and wakatime checks it agains the valid list, it is sane to just send to wakatime the ~<name>~ part of the ~<name>-mode~ of the major mode.
+    ;; Official doc: https://www.gnu.org/software/emacs/manual/html_node/emacs/Major-Modes.html
+    ;; Official doc: Major mode (naming and function) conventions: https://www.gnu.org/software/emacs/manual/html_node/elisp/Major-Mode-Conventions.html
+    ;; Also the ~mode-name~ can be used, but it is prettified name with word splitting, aka "Lisp Interaction" and probably less standartized
+    ;; List of major modes: https://www.emacswiki.org/emacs/List_Of_Major_And_Minor_Modes#toc2
+    (downcase ;; to be safe
+     (string-trim-right
+      ;; ~major-mode~ is a C function that returns type ~sequencep~, ~symbol-name~ converts ~sequencep -> stringp~
+      (symbol-name major-mode)
+      ;; trim the "-mode"
+      "-mode")
+     )
     (float-time)
     (if savep " --write" "")
     (if (s-blank wakatime-api-key) "" (format " --key %s" wakatime-api-key))))
