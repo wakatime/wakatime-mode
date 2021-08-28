@@ -66,6 +66,10 @@ the wakatime subprocess occurs."
   :type 'boolean
   :group 'wakatime)
 
+(defcustom wakatime-ignore-exit-codes '(0 102)
+  "Do not notify users about errors on these CLI exit codes."
+  :type '(repeat integer)
+  :group 'wakatime)
 
 (defun wakatime-debug (msg)
   "Write a string to the *messages* buffer."
@@ -201,7 +205,7 @@ the wakatime subprocess occurs."
          (when (memq (process-status process) '(exit signal))
            (kill-buffer (process-buffer process))
            (let ((exit-status (process-exit-status process)))
-             (when (and (not (= 0 exit-status)) (not (= 102 exit-status)))
+             (unless (member exit-status wakatime-ignore-exit-codes)
                (when wakatime-disable-on-error
                  (wakatime-mode -1)
                  (global-wakatime-mode -1))
