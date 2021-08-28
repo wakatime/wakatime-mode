@@ -50,3 +50,5 @@ To be sure heartbeats are getting sent, turn on debug mode by adding this line t
 Then run `tail -f ~/.wakatime.log` and make sure you see a 201 response code from the [WakaTime API](https://wakatime.com/api).
 
 [doom install]: https://medium.com/@el.gamerph/how-to-install-wakatime-in-doom-emacs-e5c582e15261
+
+If you want to disable an error message on a particular error code from wakatime-cli, you can set `wakatime-ignore-exit-codes`.
