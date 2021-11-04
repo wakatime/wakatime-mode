@@ -28,8 +28,8 @@
 ;; `global-wakatime-mode'.
 
 ;; Set variable `wakatime-api-key' to your API key. Point
-;; `wakatime-cli-path' to the absolute path of the CLI script
-;; (wakatime-cli.py).
+;; `wakatime-cli-path' to the absolute path of the CLI binary available
+;; from <https://github.com/wakatime/wakatime-cli/releases>.
 
 ;;; Code:
 
@@ -38,7 +38,6 @@
 (defvar wakatime-noprompt nil)
 (defvar wakatime-init-started nil)
 (defvar wakatime-init-finished nil)
-(defvar wakatime-python-path nil)
 
 (defgroup wakatime nil
   "Customizations for WakaTime"
@@ -52,11 +51,6 @@
 
 (defcustom wakatime-cli-path nil
   "Path of CLI client for WakaTime."
-  :type 'string
-  :group 'wakatime)
-
-(defcustom wakatime-python-bin "python"
-  "Path of Python binary."
   :type 'string
   :group 'wakatime)
 
@@ -76,41 +70,14 @@ the wakatime subprocess occurs."
   (or (null string)
     (zerop (length string))))
 
-(defun wakatime-guess-actual-script-path (path)
-  (let ((true-path (if (null path) nil (file-truename path))))
-    (let ((true-path (if (null true-path) path true-path)))
-      (cond
-        ((s-blank true-path) ; just return nil if path is null
-          nil)
-        ((string-match-p "\\.pyenv" true-path) ; pyenv
-          (with-temp-buffer
-            (call-process "pyenv" nil t nil "which" "wakatime")
-            (delete-char -1) ; delete newline at the end of output
-            (buffer-string)))
-        ((string-match-p "Cellar" true-path)  ; Homebrew
-          (let* ((libexec (format "%slibexec/" (file-name-directory (directory-file-name (file-name-directory true-path)))))
-            (python-path (format "%slib/python2.7/site-packages" libexec)))
-            (setq wakatime-python-path python-path)
-            (format "%sbin/wakatime" libexec)))
-        ((file-exists-p (format "%s/cli.py" true-path)) ; point to cli.py from source code
-            (format "%s/cli.py" true-path))
-        ((file-exists-p (format "%s/wakatime/cli.py" true-path)) ; point to cli.py from source code inside wakatime package folder
-            (format "%s/wakatime/cli.py" true-path))
-        (t path)))))
-
 (defun wakatime-init ()
   (unless wakatime-init-started
     (setq wakatime-init-started t)
     (when (s-blank wakatime-cli-path)
       (customize-set-variable 'wakatime-cli-path
-        (wakatime-guess-actual-script-path (wakatime-find-binary "wakatime"))))
+        (wakatime-find-binary "wakatime-cli")))
     (when (s-blank wakatime-cli-path)
       (wakatime-prompt-cli-path))
-    (when (not (s-blank wakatime-cli-path))
-      (if (not (string-match-p "cli\\.py$" wakatime-cli-path))
-        (customize-set-variable 'wakatime-python-bin nil)
-        (when (s-blank wakatime-python-bin)
-          (wakatime-prompt-python-bin))))
     (setq wakatime-init-finished t)))
 
 (defun wakatime-prompt-api-key ()
@@ -123,29 +90,13 @@ the wakatime subprocess occurs."
     (setq wakatime-noprompt nil)))
 
 (defun wakatime-prompt-cli-path ()
-  "Prompt user for cli.py path."
+  "Prompt user for wakatime-cli binary path."
   (when (and (= (recursion-depth) 0) (not wakatime-noprompt))
     (setq wakatime-noprompt t)
-    (let ((cli-path (read-string "WakaTime CLI script path (wakatime/cli.py): ")))
+    (let ((cli-path (read-string "WakaTime CLI binary path: ")))
       (customize-set-variable 'wakatime-cli-path cli-path)
       (customize-save-customized))
     (setq wakatime-noprompt nil)))
-
-(defun wakatime-prompt-python-bin ()
-  "Prompt user for path to python binary."
-  (when (and (= (recursion-depth) 0) (not wakatime-noprompt))
-    (setq wakatime-noprompt t)
-    (let ((python-bin (read-string "Path to python binary: ")))
-      (customize-set-variable 'wakatime-python-bin python-bin)
-      (customize-save-customized)
-    )
-    (setq wakatime-noprompt nil)
-  )
-  nil)
-
-(defun wakatime-python-exists (location)
-  "Check if python exists in the specified path location."
-  (= (condition-case nil (call-process location nil nil nil "--version") (error 1)) 0))
 
 (defun wakatime-find-binary (program)
   "Find the full path to an executable program."
@@ -169,9 +120,8 @@ the wakatime subprocess occurs."
 (defun wakatime-client-command (savep)
   "Return client command executable and arguments.
    Set SAVEP to non-nil for write action."
-  (format "%s%s--entity \"%s\" --plugin \"%s/%s\" --time %.2f%s%s"
-    (if (s-blank wakatime-python-bin) "" (format "\"%s\" " wakatime-python-bin))
-    (if (s-blank wakatime-cli-path) "wakatime " (format "\"%s\" " wakatime-cli-path))
+  (format "%s--entity \"%s\" --plugin \"%s/%s\" --time %.2f%s%s"
+    (if (s-blank wakatime-cli-path) "wakatime-cli " (format "\"%s\" " wakatime-cli-path))
     (buffer-file-name (current-buffer))
     wakatime-user-agent
     wakatime-version
@@ -184,7 +134,6 @@ the wakatime subprocess occurs."
   (let*
     (
       (command (wakatime-client-command savep))
-      (process-environment (if wakatime-python-path (cons (format "PYTHONPATH=%s" wakatime-python-path) process-environment) process-environment))
       (process
         (start-process
           "Shell"
