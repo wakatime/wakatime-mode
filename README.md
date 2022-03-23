@@ -13,7 +13,7 @@
 
 4. You will see a prompt asking for the path to wakatime-cli. Run `which wakatime-cli` and enter that path into the emacs prompt, then press `enter`.
 
-5. Enter your [api key](https://wakatime.com//api-key) in your `init.el` or `~/.wakatime.cfg` file.
+5. Enter your [api key](https://wakatime.com//api-key) in your `init.el` or `~/.wakatime.cfg` file ([config file format](https://github.com/wakatime/wakatime-cli/blob/develop/USAGE.md#ini-config-file)).
 
 6. Use Emacs with wakatime-mode turned on and your time will be tracked for you automatically.
 
