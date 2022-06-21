@@ -7,6 +7,7 @@
 
 1. Install wakatime-mode for Emacs using [MELPA](https://melpa.org/#/wakatime-mode) (Doom users see [these instructions][doom install] instead).
 
+
 2. Download [wakatime-cli](https://github.com/wakatime/wakatime-cli/releases) to `~/.wakatime/` or somewhere in your `$PATH`. (Or `brew install wakatime-cli` on Mac)
 
 3. Add `(global-wakatime-mode)` to your `init.el` file, then restart Emacs.
@@ -19,6 +20,9 @@
 
 7. Visit http://wakatime.com to see your logged time.
 
+### Installation for Spacemacs
+
+See [Installing WakaTime with Spacemacs](https://develop.spacemacs.org/layers/+web-services/wakatime/README.html).
 
 ## Screen Shots
 
