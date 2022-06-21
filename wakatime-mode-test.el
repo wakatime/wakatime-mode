@@ -7,9 +7,9 @@
         (wakatime-cli-path "client")
         (wakatime-user-agent "wakatime-mode"))
     (should
-     (equal (wakatime-client-command t) "/usr/bin/python client --file nil --write --plugin wakatime-mode --key secret"))
+     (equal (wakatime-client-command t) "/usr/bin/python client --entity nil --write --plugin wakatime-mode --key secret"))
     (should
-     (equal (wakatime-client-command nil) "/usr/bin/python client --file nil  --plugin wakatime-mode --key secret"))))
+     (equal (wakatime-client-command nil) "/usr/bin/python client --entity nil  --plugin wakatime-mode --key secret"))))
 
 (ert-deftest wakatime-validate-api-key ()
   "Test API key validity checker `wakatime-validate-api-key`."
