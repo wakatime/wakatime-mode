@@ -75,13 +75,14 @@ the wakatime subprocess occurs."
     (setq wakatime-init-started t)
     (when (s-blank wakatime-cli-path)
       (customize-set-variable 'wakatime-cli-path
-        (wakatime-find-binary "wakatime-cli")))
+	(wakatime-find-binary "wakatime-cli")))
     (when (s-blank wakatime-cli-path)
       (wakatime-prompt-cli-path))
     (setq wakatime-init-finished t)))
 
 (defun wakatime-prompt-api-key ()
   "Prompt user for api key."
+  (interactive)
   (when (and (= (recursion-depth) 0) (not wakatime-noprompt))
     (setq wakatime-noprompt t)
     (let ((api-key (read-string "WakaTime API key: ")))
@@ -91,6 +92,7 @@ the wakatime subprocess occurs."
 
 (defun wakatime-prompt-cli-path ()
   "Prompt user for wakatime-cli binary path."
+  (interactive)
   (when (and (= (recursion-depth) 0) (not wakatime-noprompt))
     (setq wakatime-noprompt t)
     (let ((cli-path (read-string "WakaTime CLI binary path: ")))
@@ -113,6 +115,26 @@ the wakatime subprocess occurs."
       (format "/usr/sbin/%s" program))
     ((file-exists-p (format "/sbin/%s" program))
       (format "/sbin/%s" program))
+    ;; For windows 10+ fix to get wakatime-cli.exe
+    ((file-exists-p (concat
+		(string-replace "\\" "/" (concat
+		(substitute-env-vars "$HOMEDRIVE")
+		(substitute-env-vars "$HOMEPATH")))
+		(format "/.wakatime/%s" program)))
+      (concat (string-replace "\\" "/" (concat
+		(substitute-env-vars "$HOMEDRIVE")
+		(substitute-env-vars "$HOMEPATH")))
+		(format "/.wakatime/%s" program)))
+    ;; For windows 10+ fix to get wakatime-cli-amd64.exe
+    ((file-exists-p (concat
+		(string-replace "\\" "/" (concat
+		(substitute-env-vars "$HOMEDRIVE")
+		(substitute-env-vars "$HOMEPATH")))
+		"/.wakatime/wakatime-cli-windows-amd64.exe"))
+      (concat (string-replace "\\" "/" (concat
+		(substitute-env-vars "$HOMEDRIVE")
+		(substitute-env-vars "$HOMEPATH")))
+		"/.wakatime/wakatime-cli-windows-amd64.exe"))
     ((not (s-blank (executable-find "wakatime")))
       (executable-find "wakatime"))
     (t program)))
