@@ -175,7 +175,7 @@ the wakatime subprocess occurs."
          (when (memq (process-status process) '(exit signal))
            (kill-buffer (process-buffer process))
            (let ((exit-status (process-exit-status process)))
-             (when (and (not (= 0 exit-status)) (not (= 102 exit-status)))
+             (when (and (not (= 0 exit-status)) (not (= 102 exit-status)) (not (= 112 exit-status)))
                (when wakatime-disable-on-error
                  (wakatime-mode -1)
                  (global-wakatime-mode -1))
