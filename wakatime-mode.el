@@ -115,6 +115,9 @@ the wakatime subprocess occurs."
       (format "/usr/sbin/%s" program))
     ((file-exists-p (format "/sbin/%s" program))
       (format "/sbin/%s" program))
+    ;; For linux users
+    ((file-exists-p "~/.wakatime/wakatime-cli")
+      "~/.wakatime/wakatime-cli")
     ;; For windows 10+ fix to get wakatime-cli.exe
     ((file-exists-p (concat
 		(string-replace "\\" "/" (concat
@@ -143,7 +146,7 @@ the wakatime subprocess occurs."
   "Return client command executable and arguments.
    Set SAVEP to non-nil for write action."
   (format "%s--entity %s --plugin \"%s/%s\" --time %.2f%s%s"
-    (if (s-blank wakatime-cli-path) "wakatime-cli " (format "\"%s\" " wakatime-cli-path))
+    (if (s-blank wakatime-cli-path) "wakatime-cli " (format "%s " wakatime-cli-path))
     (shell-quote-argument (buffer-file-name (current-buffer)))
     wakatime-user-agent
     wakatime-version
