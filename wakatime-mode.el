@@ -102,45 +102,22 @@ the wakatime subprocess occurs."
 
 (defun wakatime-find-binary (program)
   "Find the full path to an executable program."
-  (cond
-    ((file-exists-p (format "/usr/local/bin/%s" program))
-      (format "/usr/local/bin/%s" program))
-    ((file-exists-p (format "/usr/bin/%s" program))
-      (format "/usr/bin/%s" program))
-    ((file-exists-p (format "/bin/%s" program))
-      (format "/bin/%s" program))
-    ((file-exists-p (format "/usr/local/sbin/%s" program))
-      (format "/usr/local/sbin/%s" program))
-    ((file-exists-p (format "/usr/sbin/%s" program))
-      (format "/usr/sbin/%s" program))
-    ((file-exists-p (format "/sbin/%s" program))
-      (format "/sbin/%s" program))
-    ;; For linux users
-    ((file-exists-p "~/.wakatime/wakatime-cli")
-      "~/.wakatime/wakatime-cli")
-    ;; For windows 10+ fix to get wakatime-cli.exe
-    ((file-exists-p (concat
-		(string-replace "\\" "/" (concat
-		(substitute-env-vars "$HOMEDRIVE")
-		(substitute-env-vars "$HOMEPATH")))
-		(format "/.wakatime/%s" program)))
-      (concat (string-replace "\\" "/" (concat
-		(substitute-env-vars "$HOMEDRIVE")
-		(substitute-env-vars "$HOMEPATH")))
-		(format "/.wakatime/%s" program)))
-    ;; For windows 10+ fix to get wakatime-cli-amd64.exe
-    ((file-exists-p (concat
-		(string-replace "\\" "/" (concat
-		(substitute-env-vars "$HOMEDRIVE")
-		(substitute-env-vars "$HOMEPATH")))
-		"/.wakatime/wakatime-cli-windows-amd64.exe"))
-      (concat (string-replace "\\" "/" (concat
-		(substitute-env-vars "$HOMEDRIVE")
-		(substitute-env-vars "$HOMEPATH")))
-		"/.wakatime/wakatime-cli-windows-amd64.exe"))
-    ((not (s-blank (executable-find "wakatime")))
-      (executable-find "wakatime"))
-    (t program)))
+  (let ((paths
+         (append exec-path
+                 (list "/usr/local/bin" "/usr/bin" "/bin"
+                       "/usr/local/sbin" "/usr/sbin" "/sbin"
+                       (or (getenv "WAKATIME_HOME") "~/.wakatime")
+                       ;; nil is acceptable.
+                       (unless (s-blank (substitute-env-vars "$HOMEDRIVE"))
+                         (concat (string-replace "\\" "/" (concat
+                                   (substitute-env-vars "$HOMEDRIVE")
+                                   (substitute-env-vars "$HOMEPATH")))
+                                   "/.wakatime")))))
+        (suffixes
+         (append exec-suffixes '("-windows-amd64.exe"))))
+    ;; `executable-find' internally uses `locate-file'.
+    (or (locate-file program paths suffixes 1)
+        (locate-file "wakatime" paths suffixes 1))))
 
 (defun wakatime-client-command (savep)
   "Return client command executable and arguments.
