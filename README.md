@@ -2,11 +2,9 @@
 
 `wakatime-mode` is an automatic time tracking extension for Emacs using [WakaTime](https://wakatime.com/).
 
-
 ## Installation
 
 1. Install wakatime-mode for Emacs using [MELPA](https://melpa.org/#/wakatime-mode) (Doom users see [these instructions][doom install] instead).
-
 
 2. Download [wakatime-cli](https://github.com/wakatime/wakatime-cli/releases) to `~/.wakatime/` or somewhere in your `$PATH`. (Or `brew install wakatime-cli` on Mac)
 
@@ -28,11 +26,9 @@ See [Installing WakaTime with Spacemacs](https://develop.spacemacs.org/layers/+w
 
 ![Project Overview](https://wakatime.com/static/img/ScreenShots/ScreenShot-2014-10-29.png)
 
-
 ## Usage
 
-Enable WakaTime for the current buffer by invoking `M-x wakatime-mode`.  If you wish to activate it globally, run `M-x global-wakatime-mode`.
-
+Enable WakaTime for the current buffer by invoking `M-x wakatime-mode`. If you wish to activate it globally, run `M-x global-wakatime-mode`.
 
 ## Configuration
 
@@ -40,13 +36,12 @@ Set variable `wakatime-api-key` to your [API key](https://wakatime.com/api-key).
 
 Point `wakatime-cli-path` to the absolute path of [wakatime-cli](https://github.com/wakatime/wakatime-cli/releases).
 
-
 ## Troubleshooting
 
 To be sure heartbeats are getting sent, turn on debug mode by adding this line to your `~/.wakatime.cfg` file:
 
     debug = true
 
-Then run `tail -f ~/.wakatime.log` and make sure you see a 201 response code from the [WakaTime API](https://wakatime.com/api).
+Then run `tail -f ~/.wakatime/wakatime.log` and make sure you see a 201 response code from the [WakaTime API](https://wakatime.com/api).
 
 [doom install]: https://medium.com/@el.gamerph/how-to-install-wakatime-in-doom-emacs-e5c582e15261
