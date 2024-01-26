@@ -159,6 +159,9 @@ the wakatime subprocess occurs."
   (let*
     (
       (command (wakatime-client-command savep))
+      (coding-system-for-read
+       (unless (eq coding-system-for-read 'auto-save-coding)
+       coding-system-for-read))
       (process
         (start-process
           "Shell"
