@@ -200,16 +200,12 @@ the wakatime subprocess occurs."
 
 (defun wakatime-ping ()
   "Send ping notice to WakaTime."
-  (when (and
-         (buffer-file-name (current-buffer))
-         (not (auto-save-file-name-p (buffer-file-name (current-buffer)))))
+  (when (buffer-file-name (current-buffer))
     (wakatime-call nil)))
 
 (defun wakatime-save ()
   "Send save notice to WakaTime."
-  (when (and
-         (buffer-file-name (current-buffer))
-         (not (auto-save-file-name-p (buffer-file-name (current-buffer)))))
+  (when (buffer-file-name (current-buffer))
     (wakatime-call t)))
 
 (defun wakatime-bind-hooks ()
