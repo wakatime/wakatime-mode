@@ -64,10 +64,11 @@
 
 
 (defun wakatime-debug (msg)
-  "Write a string to the *messages* buffer."
+  "Write MSG, a string, to the *messages* buffer."
   (message "%s" msg))
 
 (defun wakatime-init ()
+  "Initialize WakaTime and set up the CLI path."
   (unless wakatime-init-started
     (setq wakatime-init-started t)
     (when (s-blank? wakatime-cli-path)
@@ -98,7 +99,7 @@
     (setq wakatime-noprompt nil)))
 
 (defun wakatime-find-binary (program)
-  "Find the full path to an executable program."
+  "Find the full path to the WakaTime executable named PROGRAM."
   (cond
     ((file-exists-p (format "/usr/local/bin/%s" program))
       (format "/usr/local/bin/%s" program))
@@ -152,7 +153,8 @@ Set SAVEP to non-nil for write action."
     (if (s-blank? wakatime-api-key) "" (format " --key %s" wakatime-api-key))))
 
 (defun wakatime-call (savep)
-  "Call WakaTime command."
+  "Call WakaTime command.
+If SAVEP, indicate that the heartbeat is triggered by saving."
   (let*
     (
       (command (wakatime-client-command savep))
@@ -218,7 +220,8 @@ Set SAVEP to non-nil for write action."
   (remove-hook 'first-change-hook 'wakatime-ping t))
 
 (defun wakatime-turn-on (defer)
-  "Turn on WakaTime."
+  "Turn on WakaTime.
+If DEFER, actually turn on a second later."
   (if defer
     (run-at-time "1 sec" nil 'wakatime-turn-on nil)
     (let ()
