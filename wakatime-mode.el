@@ -7,6 +7,7 @@
 ;; Website: https://wakatime.com
 ;; Keywords: calendar, comm
 ;; Version: 1.0.2
+;; Package-Requires: ((emacs "24.3") (s "1.13"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -32,6 +33,8 @@
 ;; from <https://github.com/wakatime/wakatime-cli/releases>.
 
 ;;; Code:
+
+(require 's)
 
 (defconst wakatime-version "1.0.2")
 (defconst wakatime-user-agent "emacs-wakatime")
@@ -65,18 +68,13 @@ the wakatime subprocess occurs."
   "Write a string to the *messages* buffer."
   (message "%s" msg))
 
-(defun s-blank (string)
-  "Return true if the string is empty or nil. Expects string."
-  (or (null string)
-    (zerop (length string))))
-
 (defun wakatime-init ()
   (unless wakatime-init-started
     (setq wakatime-init-started t)
-    (when (s-blank wakatime-cli-path)
+    (when (s-blank? wakatime-cli-path)
       (customize-set-variable 'wakatime-cli-path
 	(wakatime-find-binary "wakatime-cli")))
-    (when (s-blank wakatime-cli-path)
+    (when (s-blank? wakatime-cli-path)
       (wakatime-prompt-cli-path))
     (setq wakatime-init-finished t)))
 
@@ -120,25 +118,25 @@ the wakatime subprocess occurs."
       "~/.wakatime/wakatime-cli")
     ;; For windows 10+ fix to get wakatime-cli.exe
     ((file-exists-p (concat
-		(string-replace "\\" "/" (concat
+		(s-replace "\\" "/" (concat
 		(substitute-env-vars "$HOMEDRIVE")
 		(substitute-env-vars "$HOMEPATH")))
 		(format "/.wakatime/%s" program)))
-      (concat (string-replace "\\" "/" (concat
+      (concat (s-replace "\\" "/" (concat
 		(substitute-env-vars "$HOMEDRIVE")
 		(substitute-env-vars "$HOMEPATH")))
 		(format "/.wakatime/%s" program)))
     ;; For windows 10+ fix to get wakatime-cli-amd64.exe
     ((file-exists-p (concat
-		(string-replace "\\" "/" (concat
+		(s-replace "\\" "/" (concat
 		(substitute-env-vars "$HOMEDRIVE")
 		(substitute-env-vars "$HOMEPATH")))
 		"/.wakatime/wakatime-cli-windows-amd64.exe"))
-      (concat (string-replace "\\" "/" (concat
+      (concat (s-replace "\\" "/" (concat
 		(substitute-env-vars "$HOMEDRIVE")
 		(substitute-env-vars "$HOMEPATH")))
 		"/.wakatime/wakatime-cli-windows-amd64.exe"))
-    ((not (s-blank (executable-find "wakatime")))
+    ((not (s-blank? (executable-find "wakatime")))
       (executable-find "wakatime"))
     (t program)))
 
@@ -146,13 +144,13 @@ the wakatime subprocess occurs."
   "Return client command executable and arguments.
    Set SAVEP to non-nil for write action."
   (format "%s--entity %s --plugin \"%s/%s\" --time %.2f%s%s"
-    (if (s-blank wakatime-cli-path) "wakatime-cli " (format "%s " wakatime-cli-path))
+    (if (s-blank? wakatime-cli-path) "wakatime-cli " (format "%s " wakatime-cli-path))
     (shell-quote-argument (buffer-file-name (current-buffer)))
     wakatime-user-agent
     wakatime-version
     (float-time)
     (if savep " --write" "")
-    (if (s-blank wakatime-api-key) "" (format " --key %s" wakatime-api-key))))
+    (if (s-blank? wakatime-api-key) "" (format " --key %s" wakatime-api-key))))
 
 (defun wakatime-call (savep)
   "Call WakaTime command."
