@@ -4,7 +4,7 @@
 
 ;; Author: Gabor Torok <gabor@20y.hu>
 ;; Maintainer: Alan Hamlett <alan@wakatime.com>
-;; Website: https://wakatime.com
+;; Homepage: https://wakatime.com
 ;; Keywords: calendar, comm
 ;; Version: 1.0.2
 ;; Package-Requires: ((emacs "24.3") (s "1.13"))
