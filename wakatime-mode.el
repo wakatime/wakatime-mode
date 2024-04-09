@@ -1,12 +1,13 @@
-;;; wakatime-mode.el --- Automatic time tracking extension for WakaTime
+;;; wakatime-mode.el --- Automatic time tracking extension for WakaTime  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2013  Gabor Torok <gabor@20y.hu>
 
 ;; Author: Gabor Torok <gabor@20y.hu>
 ;; Maintainer: Alan Hamlett <alan@wakatime.com>
-;; Website: https://wakatime.com
+;; Homepage: https://wakatime.com
 ;; Keywords: calendar, comm
 ;; Version: 1.0.2
+;; Package-Requires: ((emacs "24.3") (s "1.13"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -33,6 +34,8 @@
 
 ;;; Code:
 
+(require 's)
+
 (defconst wakatime-version "1.0.2")
 (defconst wakatime-user-agent "emacs-wakatime")
 (defvar wakatime-noprompt nil)
@@ -40,7 +43,7 @@
 (defvar wakatime-init-finished nil)
 
 (defgroup wakatime nil
-  "Customizations for WakaTime"
+  "Customizations for WakaTime."
   :group 'convenience
   :prefix "wakatime-")
 
@@ -55,28 +58,23 @@
   :group 'wakatime)
 
 (defcustom wakatime-disable-on-error nil
-  "Turn off wakatime-mode and wakatime-global-mode when errors in
-the wakatime subprocess occurs."
+  "Turn off WakaTime modes (both local and global) if the subprocess throws errors."
   :type 'boolean
   :group 'wakatime)
 
 
 (defun wakatime-debug (msg)
-  "Write a string to the *messages* buffer."
+  "Write MSG, a string, to the *messages* buffer."
   (message "%s" msg))
 
-(defun s-blank (string)
-  "Return true if the string is empty or nil. Expects string."
-  (or (null string)
-    (zerop (length string))))
-
 (defun wakatime-init ()
+  "Initialize WakaTime and set up the CLI path."
   (unless wakatime-init-started
     (setq wakatime-init-started t)
-    (when (s-blank wakatime-cli-path)
+    (when (s-blank? wakatime-cli-path)
       (customize-set-variable 'wakatime-cli-path
 	(wakatime-find-binary "wakatime-cli")))
-    (when (s-blank wakatime-cli-path)
+    (when (s-blank? wakatime-cli-path)
       (wakatime-prompt-cli-path))
     (setq wakatime-init-finished t)))
 
@@ -101,7 +99,7 @@ the wakatime subprocess occurs."
     (setq wakatime-noprompt nil)))
 
 (defun wakatime-find-binary (program)
-  "Find the full path to an executable program."
+  "Find the full path to the WakaTime executable named PROGRAM."
   (cond
     ((file-exists-p (format "/usr/local/bin/%s" program))
       (format "/usr/local/bin/%s" program))
@@ -120,42 +118,43 @@ the wakatime subprocess occurs."
       "~/.wakatime/wakatime-cli")
     ;; For windows 10+ fix to get wakatime-cli.exe
     ((file-exists-p (concat
-		(string-replace "\\" "/" (concat
+		(s-replace "\\" "/" (concat
 		(substitute-env-vars "$HOMEDRIVE")
 		(substitute-env-vars "$HOMEPATH")))
 		(format "/.wakatime/%s" program)))
-      (concat (string-replace "\\" "/" (concat
+      (concat (s-replace "\\" "/" (concat
 		(substitute-env-vars "$HOMEDRIVE")
 		(substitute-env-vars "$HOMEPATH")))
 		(format "/.wakatime/%s" program)))
     ;; For windows 10+ fix to get wakatime-cli-amd64.exe
     ((file-exists-p (concat
-		(string-replace "\\" "/" (concat
+		(s-replace "\\" "/" (concat
 		(substitute-env-vars "$HOMEDRIVE")
 		(substitute-env-vars "$HOMEPATH")))
 		"/.wakatime/wakatime-cli-windows-amd64.exe"))
-      (concat (string-replace "\\" "/" (concat
+      (concat (s-replace "\\" "/" (concat
 		(substitute-env-vars "$HOMEDRIVE")
 		(substitute-env-vars "$HOMEPATH")))
 		"/.wakatime/wakatime-cli-windows-amd64.exe"))
-    ((not (s-blank (executable-find "wakatime")))
+    ((not (s-blank? (executable-find "wakatime")))
       (executable-find "wakatime"))
     (t program)))
 
 (defun wakatime-client-command (savep)
   "Return client command executable and arguments.
-   Set SAVEP to non-nil for write action."
+Set SAVEP to non-nil for write action."
   (format "%s--entity %s --plugin \"%s/%s\" --time %.2f%s%s"
-    (if (s-blank wakatime-cli-path) "wakatime-cli " (format "%s " wakatime-cli-path))
+    (if (s-blank? wakatime-cli-path) "wakatime-cli " (format "%s " wakatime-cli-path))
     (shell-quote-argument (buffer-file-name (current-buffer)))
     wakatime-user-agent
     wakatime-version
     (float-time)
     (if savep " --write" "")
-    (if (s-blank wakatime-api-key) "" (format " --key %s" wakatime-api-key))))
+    (if (s-blank? wakatime-api-key) "" (format " --key %s" wakatime-api-key))))
 
 (defun wakatime-call (savep)
-  "Call WakaTime command."
+  "Call WakaTime command.
+If SAVEP, indicate that the heartbeat is triggered by saving."
   (let*
     (
       (command (wakatime-client-command savep))
@@ -183,7 +182,7 @@ the wakatime subprocess occurs."
                  (wakatime-mode -1)
                  (global-wakatime-mode -1))
                (cond
-                 ((= exit-status 103) (error "WakaTime Error (%s) Config file parse error. Check your ~/.wakatime.cfg file." exit-status))
+                 ((= exit-status 103) (error "WakaTime Error (%s) Config file parse error. Please check your ~/.wakatime.cfg file" exit-status))
                  ((= exit-status 104) (error "WakaTime Error (%s) Invalid API Key. Set your api key with: (custom-set-variables '(wakatime-api-key \"XXXX\"))" exit-status))
                  ((= exit-status 105) (error "WakaTime Error (%s) Unknown wakatime-cli error. Please check your ~/.wakatime/wakatime.log file and open a new issue at https://github.com/wakatime/wakatime-mode" exit-status))
                  ((= exit-status 106) (error "WakaTime Error (%s) Malformed heartbeat error. Please check your ~/.wakatime/wakatime.log file and open a new issue at https://github.com/wakatime/wakatime-mode" exit-status))
@@ -221,7 +220,8 @@ the wakatime subprocess occurs."
   (remove-hook 'first-change-hook 'wakatime-ping t))
 
 (defun wakatime-turn-on (defer)
-  "Turn on WakaTime."
+  "Turn on WakaTime.
+If DEFER, actually turn on a second later."
   (if defer
     (run-at-time "1 sec" nil 'wakatime-turn-on nil)
     (let ()
