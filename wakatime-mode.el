@@ -43,7 +43,7 @@
 (defvar wakatime-init-finished nil)
 
 (defgroup wakatime nil
-  "Customizations for WakaTime"
+  "Customizations for WakaTime."
   :group 'convenience
   :prefix "wakatime-")
 
@@ -58,8 +58,7 @@
   :group 'wakatime)
 
 (defcustom wakatime-disable-on-error nil
-  "Turn off wakatime-mode and wakatime-global-mode when errors in
-the wakatime subprocess occurs."
+  "Turn off WakaTime modes (both local and global) if the subprocess throws errors."
   :type 'boolean
   :group 'wakatime)
 
@@ -142,7 +141,7 @@ the wakatime subprocess occurs."
 
 (defun wakatime-client-command (savep)
   "Return client command executable and arguments.
-   Set SAVEP to non-nil for write action."
+Set SAVEP to non-nil for write action."
   (format "%s--entity %s --plugin \"%s/%s\" --time %.2f%s%s"
     (if (s-blank? wakatime-cli-path) "wakatime-cli " (format "%s " wakatime-cli-path))
     (shell-quote-argument (buffer-file-name (current-buffer)))
@@ -181,7 +180,7 @@ the wakatime subprocess occurs."
                  (wakatime-mode -1)
                  (global-wakatime-mode -1))
                (cond
-                 ((= exit-status 103) (error "WakaTime Error (%s) Config file parse error. Check your ~/.wakatime.cfg file." exit-status))
+                 ((= exit-status 103) (error "WakaTime Error (%s) Config file parse error. Please check your ~/.wakatime.cfg file" exit-status))
                  ((= exit-status 104) (error "WakaTime Error (%s) Invalid API Key. Set your api key with: (custom-set-variables '(wakatime-api-key \"XXXX\"))" exit-status))
                  ((= exit-status 105) (error "WakaTime Error (%s) Unknown wakatime-cli error. Please check your ~/.wakatime/wakatime.log file and open a new issue at https://github.com/wakatime/wakatime-mode" exit-status))
                  ((= exit-status 106) (error "WakaTime Error (%s) Malformed heartbeat error. Please check your ~/.wakatime/wakatime.log file and open a new issue at https://github.com/wakatime/wakatime-mode" exit-status))
