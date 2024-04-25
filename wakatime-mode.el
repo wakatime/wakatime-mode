@@ -142,12 +142,12 @@ the wakatime subprocess occurs."
       (executable-find "wakatime"))
     (t program)))
 
-(defun wakatime-client-command (savep)
+(defun wakatime-client-command (savep &optional file)
   "Return client command executable and arguments.
    Set SAVEP to non-nil for write action."
   (format "%s--entity %s --plugin \"%s/%s\" --time %.2f%s%s"
     (if (s-blank wakatime-cli-path) "wakatime-cli " (format "%s " wakatime-cli-path))
-    (shell-quote-argument (buffer-file-name (current-buffer)))
+    (shell-quote-argument (or file (buffer-file-name (current-buffer))))
     wakatime-user-agent
     wakatime-version
     (float-time)
@@ -187,7 +187,7 @@ the wakatime subprocess occurs."
                  ((= exit-status 104) (error "WakaTime Error (%s) Invalid API Key. Set your api key with: (custom-set-variables '(wakatime-api-key \"XXXX\"))" exit-status))
                  ((= exit-status 105) (error "WakaTime Error (%s) Unknown wakatime-cli error. Please check your ~/.wakatime/wakatime.log file and open a new issue at https://github.com/wakatime/wakatime-mode" exit-status))
                  ((= exit-status 106) (error "WakaTime Error (%s) Malformed heartbeat error. Please check your ~/.wakatime/wakatime.log file and open a new issue at https://github.com/wakatime/wakatime-mode" exit-status))
-                 (t (error "WakaTime Error (%s) Make sure this command runs in a Terminal: %s" exit-status (wakatime-client-command nil)))
+                 (t (error "WakaTime Error (%s) Make sure this command runs in a Terminal: %s" exit-status (wakatime-client-command nil ,(buffer-file-name (current-buffer)))))
                )
              )
            )
