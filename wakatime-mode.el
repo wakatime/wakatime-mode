@@ -145,12 +145,14 @@ the wakatime subprocess occurs."
 (defun wakatime-client-command (savep &optional file)
   "Return client command executable and arguments.
    Set SAVEP to non-nil for write action."
-  (format "%s--entity %s --plugin \"%s/%s\" --time %.2f%s%s"
+  (format "%s--entity %s --plugin \"%s/%s\" --time %.2f --lineno %d --lines-in-file %d%s%s"
     (if (s-blank wakatime-cli-path) "wakatime-cli " (format "%s " wakatime-cli-path))
     (shell-quote-argument (or file (buffer-file-name (current-buffer))))
     wakatime-user-agent
     wakatime-version
     (float-time)
+    (line-number-at-pos)
+    (count-lines (point-min) (point-max))
     (if savep " --write" "")
     (if (s-blank wakatime-api-key) "" (format " --key %s" wakatime-api-key))))
 
