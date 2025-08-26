@@ -54,6 +54,11 @@
   :type 'string
   :group 'wakatime)
 
+(defcustom wakatime-config-path nil
+  "Path of WakaTime configuration"
+  :type 'string
+  :group 'wakatime)
+
 (defcustom wakatime-disable-on-error nil
   "Turn off wakatime-mode and wakatime-global-mode when errors in
 the wakatime subprocess occurs."
@@ -98,6 +103,16 @@ the wakatime subprocess occurs."
     (let ((cli-path (read-string "WakaTime CLI binary path: ")))
       (customize-set-variable 'wakatime-cli-path cli-path)
       (customize-save-customized))
+    (setq wakatime-noprompt nil)))
+
+(defun wakatime-prompt-config-path ()
+  "Prompt user for wakatime config path."
+  (interactive)
+  (unless wakatime-noprompt
+    (setq wakatime-noprompt t)
+    (let ((config-path (read-file-name "WakaTime config path: ")))
+      (customize-set-variable 'wakatime-config-path config-path))
+    (customize-save-customized)
     (setq wakatime-noprompt nil)))
 
 (defun wakatime-find-binary (program)
@@ -145,14 +160,15 @@ the wakatime subprocess occurs."
 (defun wakatime-client-command (savep &optional file)
   "Return client command executable and arguments.
    Set SAVEP to non-nil for write action."
-  (format "%s--entity %s --plugin \"%s/%s\" --time %.2f%s%s"
+  (format "%s--entity %s --plugin \"%s/%s\" --time %.2f%s%s%s"
     (if (s-blank wakatime-cli-path) "wakatime-cli " (format "%s " wakatime-cli-path))
     (shell-quote-argument (or file (buffer-file-name (current-buffer))))
     wakatime-user-agent
     wakatime-version
     (float-time)
     (if savep " --write" "")
-    (if (s-blank wakatime-api-key) "" (format " --key %s" wakatime-api-key))))
+    (if (s-blank wakatime-api-key) "" (format " --key %s" wakatime-api-key))
+    (if (s-blank wakatime-config-path) "" (format " --config \"%s\"" (shell-quote-argument wakatime-config-path)))))
 
 (defun wakatime-call (savep)
   "Call WakaTime command."
