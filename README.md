@@ -4,19 +4,22 @@
 
 ## Installation
 
-1. Install wakatime-mode for Emacs using [MELPA](https://melpa.org/#/wakatime-mode) (Doom users see [these instructions][doom install] instead).
+1. Configure `wakatime-mode` in your `init.el` file using `use-package` (this automatically installs it from [MELPA](https://melpa.org/#/wakatime-mode)):
 
-2. Add `(global-wakatime-mode)` to your `init.el` file, then restart Emacs. wakatime-mode will automatically download the latest [wakatime-cli](https://github.com/wakatime/wakatime-cli/releases) into `~/.wakatime/` on first launch, and check for updates at most every 4 hours. To use a specific binary instead, set `wakatime-cli-path` to its absolute path (or install `wakatime-cli` into your `$PATH`, e.g. `brew install wakatime-cli` on macOS).
+   ```elisp
+   (use-package wakatime-mode
+     :ensure t
+     :config
+     (global-wakatime-mode 1))
+   ```
 
-3. Enter your [api key](https://wakatime.com//api-key) in your `init.el` or `~/.wakatime.cfg` file ([config file format](https://github.com/wakatime/wakatime-cli/blob/develop/USAGE.md#ini-config-file)).
+1. Restart Emacs. wakatime-mode will automatically download the latest [`wakatime-cli`](https://github.com/wakatime/wakatime-cli/releases) into `~/.wakatime/` on first launch, and check for updates at most every 4 hours. To use a specific binary instead, set `wakatime-cli-path` to its absolute path (or install `wakatime-cli` into your `$PATH`, e.g. `brew install wakatime-cli` on macOS).
 
-4. Use Emacs with wakatime-mode turned on and your time will be tracked for you automatically.
+1. Enter your [api key](https://wakatime.com//api-key) in your `init.el` or `~/.wakatime.cfg` file ([config file format](https://github.com/wakatime/wakatime-cli/blob/develop/USAGE.md#ini-config-file)).
 
-5. Visit http://wakatime.com to see your logged time.
+1. Use Emacs with wakatime-mode turned on and your time will be tracked for you automatically.
 
-### Installation for Spacemacs
-
-See [Installing WakaTime with Spacemacs](https://develop.spacemacs.org/layers/+web-services/wakatime/README.html).
+1. Visit http://wakatime.com to see your logged time.
 
 ## Screen Shots
 
@@ -30,7 +33,7 @@ Enable WakaTime for the current buffer by invoking `M-x wakatime-mode`. If you w
 
 Set variable `wakatime-api-key` to your [API key](https://wakatime.com/api-key).
 
-By default `wakatime-cli-path` is `nil`, which tells wakatime-mode to look for an existing `wakatime-cli` on your `$PATH` and otherwise auto-download the latest [wakatime-cli](https://github.com/wakatime/wakatime-cli/releases) release into `~/.wakatime/`. Set `wakatime-cli-path` to an absolute path to use a specific binary. Auto-update checks run at most every `wakatime-update-check-interval` seconds (4 hours by default).
+By default `wakatime-cli-path` is `nil`, which tells wakatime-mode to look for an existing `wakatime-cli` on your `$PATH` and otherwise auto-download the latest [`wakatime-cli`](https://github.com/wakatime/wakatime-cli/releases) release into `~/.wakatime/`. Set `wakatime-cli-path` to an absolute path to use a specific binary. Auto-update checks run at most every `wakatime-update-check-interval` seconds (4 hours by default).
 
 ## Troubleshooting
 
@@ -39,5 +42,3 @@ To be sure heartbeats are getting sent, turn on debug mode by adding this line t
     debug = true
 
 Then run `tail -f ~/.wakatime/wakatime.log` and make sure you see a 201 response code from the [WakaTime API](https://wakatime.com/api).
-
-[doom install]: https://medium.com/@el.gamerph/how-to-install-wakatime-in-doom-emacs-e5c582e15261
