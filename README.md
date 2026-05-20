@@ -13,15 +13,13 @@
      (global-wakatime-mode 1))
    ```
 
-2. Download [`wakatime-cli`](https://github.com/wakatime/wakatime-cli/releases) to `~/.wakatime/` or somewhere in your `$PATH`. (Or [`brew install wakatime-cli`](https://formulae.brew.sh/formula/wakatime-cli) on Mac)
+1. Restart Emacs. wakatime-mode will automatically download the latest [`wakatime-cli`](https://github.com/wakatime/wakatime-cli/releases) into `~/.wakatime/` on first launch, and check for updates at most every 4 hours. To use a specific binary instead, set `wakatime-cli-path` to its absolute path (or install `wakatime-cli` into your `$PATH`, e.g. `brew install wakatime-cli` on macOS).
 
-3. Restart Emacs. You will see a prompt asking for the path to `wakatime-cli`. Run `which wakatime-cli` and enter that path into the emacs prompt, then press `enter`.
+1. Enter your [api key](https://wakatime.com//api-key) in your `init.el` or `~/.wakatime.cfg` file ([config file format](https://github.com/wakatime/wakatime-cli/blob/develop/USAGE.md#ini-config-file)).
 
-4. Enter your [api key](https://wakatime.com//api-key) in your `init.el` or `~/.wakatime.cfg` file ([config file format](https://github.com/wakatime/wakatime-cli/blob/develop/USAGE.md#ini-config-file)).
+1. Use Emacs with wakatime-mode turned on and your time will be tracked for you automatically.
 
-5. Use Emacs with wakatime-mode turned on and your time will be tracked for you automatically.
-
-6. Visit http://wakatime.com to see your logged time.
+1. Visit http://wakatime.com to see your logged time.
 
 ## Screen Shots
 
@@ -35,7 +33,7 @@ Enable WakaTime for the current buffer by invoking `M-x wakatime-mode`. If you w
 
 Set variable `wakatime-api-key` to your [API key](https://wakatime.com/api-key).
 
-Point `wakatime-cli-path` to the absolute path of [`wakatime-cli`](https://github.com/wakatime/wakatime-cli/releases).
+By default `wakatime-cli-path` is `nil`, which tells wakatime-mode to look for an existing `wakatime-cli` on your `$PATH` and otherwise auto-download the latest [`wakatime-cli`](https://github.com/wakatime/wakatime-cli/releases) release into `~/.wakatime/`. Set `wakatime-cli-path` to an absolute path to use a specific binary. Auto-update checks run at most every `wakatime-update-check-interval` seconds (4 hours by default).
 
 ## Troubleshooting
 
