@@ -3,6 +3,13 @@ History
 -------
 
 
+1.1.0 (2026-05-19)
+++++++++++++++++++
+
+- automatically download wakatime-cli from GitHub releases when not found
+- check for wakatime-cli updates on launch, at most every 4 hours
+
+
 1.0.2 (2015-05-05)
 ++++++++++++++++++
 
