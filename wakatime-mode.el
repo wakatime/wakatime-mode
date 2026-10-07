@@ -1,4 +1,4 @@
-;;; wakatime-mode.el --- Automatic time tracking extension for WakaTime
+;;; wakatime-mode.el --- Automatic time tracking extension for WakaTime  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2013  Gabor Torok <gabor@20y.hu>
 
